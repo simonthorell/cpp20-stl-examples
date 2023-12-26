@@ -1,6 +1,15 @@
-// Author: Simon Thorell
-// Date: 2023-12-26
-// Version: 1.0
+/******************************************************************************
+ * File Name: main.cpp
+ * Project Name: cpp-Iot23-algorithms
+ * Author: Simon Thorell
+ * Date Created: 2023-12-26
+ * Last Modified: 2023-12-26
+ * Description: This file contains the main execution loop for the exam in the
+ *              course 'Datastructures and Algorithms' for IoT23 at Nackademin,
+ *              Stockholm, Sweden. It initializes the system and manages the 
+ *              main application lifecycle.
+ * License: MIT License
+ ******************************************************************************/
 
 // Include standard libraries
 #include <iostream> // std::cout, std::cin
@@ -23,9 +32,9 @@ int main() {
     int exec = runMenuLoop();
 
     if (exec == 0)
-        return EXIT_SUCCESS;
+        return EXIT_SUCCESS; // runMenuLoop() exited successfully
     else
-        return EXIT_FAILURE;
+        return EXIT_FAILURE; // runMenuLoop() exited with failure
 }
 
 //=============================================================================
@@ -46,7 +55,7 @@ void displayMenu() {
 }
 
 int runMenuLoop() {
-    char exec = 0; // 0 = success, >1 = failure
+    char exec = 0; // 0 = success, 1 = failure
     char choice;
     bool exit = false;
 
