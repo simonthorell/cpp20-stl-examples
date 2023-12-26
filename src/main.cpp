@@ -29,12 +29,10 @@ int runMenuLoop();
 //=============================================================================
 
 int main() {
-    int exec = runMenuLoop();
-
-    if (exec == 0)
-        return EXIT_SUCCESS; // runMenuLoop() exited successfully
+    if (!runMenuLoop())
+        return EXIT_SUCCESS; // runMenuLoop() exited successfully (0)
     else
-        return EXIT_FAILURE; // runMenuLoop() exited with failure
+        return EXIT_FAILURE; // runMenuLoop() exited with failure (1)
 }
 
 //=============================================================================
