@@ -56,6 +56,11 @@ bool SensorDataProcessor::updateFuelConsumption(float factor) {
         return data.GetSensorType() == SensorType::FuelConsumption;
     });
 
+    // Return false if there are no entries to update or if the factor is 0
+    if (std::ranges::empty(fuelConsumptionView) || factor == 0) { 
+        return false;
+    } 
+
     // Apply the transformation to update the value in place
     std::ranges::transform(fuelConsumptionView, fuelConsumptionView.begin()
                                               , [factor](SensorData& data) {

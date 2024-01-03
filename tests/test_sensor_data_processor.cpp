@@ -53,6 +53,11 @@ std::vector<SensorData> CreateMockSensorData(int numAltitudeReadings,
     data.emplace_back(SensorType::SpeedInKmh, 50.0f, targetTimeStart - 1000); 
     // After the target day
     data.emplace_back(SensorType::FuelConsumption, 200.0f, targetTimeEnd + 1000);
+    // On the target day
+    data.emplace_back(SensorType::FuelConsumption, 300.0f, today);
+    // Add more varied fuel consumption data
+    data.emplace_back(SensorType::FuelConsumption, 250.0f, today + 500);
+    data.emplace_back(SensorType::FuelConsumption, 350.0f, today - 500);
 
     return data;
 }
@@ -149,3 +154,51 @@ TEST(SensorDataProcessorTest, ReturnsTrueForValidSpeedAboveThreshold) {
 // Here, tests are designed to assess the fuel consumption data processing 
 // capabilities of the SensorDataProcessor. They ensure that fuel data is 
 // correctly interpreted and handled under different conditions and values.
+
+// Test updating when fuel consumption entries are present and factor is not 0
+TEST(SensorDataProcessorTest, UpdatesFuelConsumptionWhenFactorNotZero) {
+    // Create mock data with some FuelConsumption entries
+    std::vector<SensorData> data = CreateMockSensorData(5, yesterday, today);
+
+    // Create a new instance with the mock data
+    SensorDataProcessor processor(data);
+
+    // Apply the update
+    float factor = 1.75; // 175% update factor
+    bool updated = processor.updateFuelConsumption(factor);
+    EXPECT_TRUE(updated) << "Expected fuel consumption data to be updated.";
+}
+
+// Test that no update occurs when the factor is 0
+TEST(SensorDataProcessorTest, DoesNotUpdateFuelConsumptionWhenFactorIsZero) {
+    // Create mock data with some FuelConsumption entries
+    std::vector<SensorData> data = CreateMockSensorData(5, yesterday, today);
+
+    // Create a new instance with the mock data
+    SensorDataProcessor processor(data);
+
+    // Apply the update with a factor of 0
+    float factor = 0; // 0% update factor
+    bool updated = processor.updateFuelConsumption(factor);
+    EXPECT_FALSE(updated) << "No fuel consumption data should be updated when factor is 0.";
+}
+
+// Test that no update occurs and returns false when there are no FuelConsumption entries
+TEST(SensorDataProcessorTest, ReturnsFalseWhenNoFuelConsumptionEntries) {
+    // Create mock data without any FuelConsumption entries
+    std::vector<SensorData> data = CreateMockSensorData(5, yesterday, today);
+    // Optionally remove any accidental FuelConsumption entries
+    data.erase(std::remove_if(data.begin(), data.end(), [](SensorData& entry) {
+        return entry.GetSensorType() == SensorType::FuelConsumption;
+    }), data.end());
+
+    // Create a new instance with the mock data
+    SensorDataProcessor processor(data);
+
+    // Apply the update with any factor
+    float factor = 1.25f; // The specific factor is irrelevant in this case
+    bool updated = processor.updateFuelConsumption(factor);
+
+    // Expect the function to report no updates
+    EXPECT_FALSE(updated) << "Expected no updates when there are no FuelConsumption entries.";
+}
