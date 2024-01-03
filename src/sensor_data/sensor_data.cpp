@@ -38,7 +38,8 @@ void FillData(std::vector<SensorData>& v) {
 		else if (type == SensorType::FuelConsumption)
 			value = rand() * 3.0f;
 		else if (type == SensorType::SpeedInKmh)
-			value = rand() % 110;
+			// value = rand() % 110;
+			value = 99.8f;
 		else
 		{
 			value = 99;
@@ -71,10 +72,20 @@ int sensor_data(char menuSelection) {
 	// Create an instance of SensorDataProcessor with the filled sensor data
 	SensorDataProcessor processor(sensorData);
 
-	// Process the data based on the menu selection
-	if (menuSelection == '1') processor.countAltitudeData();
-	else if (menuSelection == '2') processor.checkMaxSpeed();
-	else if (menuSelection == '3') processor.updateFuelConsumption();
+	switch (menuSelection) {
+	case '1':
+		std::cout << "Altitude readings: " << processor.countAltitudeData() << std::endl;
+		break;
+	case '2':
+		if (processor.checkMaxSpeed())
+			std::cout << "Max speed reached" << std::endl;
+		else
+			std::cout << "Max speed not reached" << std::endl;
+		break;
+	case '3':
+		processor.updateFuelConsumption();
+		break;
+	}
 
 	return 0; // execution success
 }

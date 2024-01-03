@@ -11,13 +11,13 @@ public:
     explicit SensorDataProcessor(const std::vector<SensorData>& data);
 
     // Function to count altitude data
-    void countAltitudeData();
+    int countAltitudeData();
 
     // Function to check max speed
-    void checkMaxSpeed();
+    bool checkMaxSpeed();
 
     // Function to update fuel consumption
-    void updateFuelConsumption();
+    bool updateFuelConsumption();
 
 private:
     std::vector<SensorData> sensorData;
