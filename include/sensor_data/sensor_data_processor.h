@@ -14,10 +14,10 @@ public:
     int countAltitudeData();
 
     // Function to check max speed
-    bool checkMaxSpeed();
+    bool checkMaxSpeed(float maxSpeed);
 
     // Function to update fuel consumption
-    bool updateFuelConsumption();
+    bool updateFuelConsumption(float factor);
 
 private:
     std::vector<SensorData> sensorData;

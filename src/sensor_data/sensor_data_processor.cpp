@@ -16,10 +16,17 @@ SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data)
 //              specific date (2012-01-02).
 //=============================================================================
 int SensorDataProcessor::countAltitudeData() {
-    int altitudeDataCount = std::ranges::count_if(sensorData, [](SensorData& data) {
+    // Start of the target day (2012-01-02 00:00:00)
+    std::time_t targetTimeStart = CreateTime(2012, 1, 2, 0, 0, 0);
+    // Start of the next day (2012-01-03 00:00:00)
+    std::time_t targetTimeEnd = CreateTime(2012, 1, 3, 0, 0, 0);
+
+    int altitudeDataCount = std::ranges::count_if(sensorData, [targetTimeStart, targetTimeEnd](SensorData& data) {
+        std::time_t dataTime = data.GetTime();
         return data.GetSensorType() == SensorType::Altitude 
-            && data.GetTime() == CreateTime(2012, 1, 2, 1, 1, 1);
+            && dataTime >= targetTimeStart && dataTime < targetTimeEnd;
     });
+    
     // Return the amount of altitude data entries
     return altitudeDataCount;
 }
@@ -30,10 +37,10 @@ int SensorDataProcessor::countAltitudeData() {
 //              stops once the first qualifying entry is found, returning true.
 //              If no entries exceed this speed, it returns false.
 //=============================================================================
-bool SensorDataProcessor::checkMaxSpeed() {
+bool SensorDataProcessor::checkMaxSpeed(float maxSpeed) {
     // Filter to only SpeedInKmh entries exceeding 99.9, using lazy evaluation for efficiency
-    auto speedReached = std::views::filter(sensorData, [](SensorData& data) {
-        return data.GetSensorType() == SensorType::SpeedInKmh && data.GetValue() > 99.9;
+    auto speedReached = std::views::filter(sensorData, [maxSpeed](SensorData& data) {
+        return data.GetSensorType() == SensorType::SpeedInKmh && data.GetValue() > maxSpeed;
     });
     // Return true once/if any entries exceed the max speed
     return speedReached.begin() != speedReached.end();
@@ -43,15 +50,16 @@ bool SensorDataProcessor::checkMaxSpeed() {
 // Function: updateFuelConsumption
 // Description: Updates all FuelConsumption data entries by 75%.
 //=============================================================================
-bool SensorDataProcessor::updateFuelConsumption() {
+bool SensorDataProcessor::updateFuelConsumption(float factor) {
     // Create a view of only the FuelConsumption entries
     auto fuelConsumptionView = std::views::filter(sensorData, [](SensorData& data) {
         return data.GetSensorType() == SensorType::FuelConsumption;
     });
 
     // Apply the transformation to update the value in place
-    std::ranges::transform(fuelConsumptionView, fuelConsumptionView.begin(), [](SensorData& data) {
-        data.SetValue(data.GetValue() * 1.75f);
+    std::ranges::transform(fuelConsumptionView, fuelConsumptionView.begin()
+                                              , [factor](SensorData& data) {
+        data.SetValue(data.GetValue() * factor);
         return data; // The return value isn't used since we're modifying in place
     });
 
