@@ -3,12 +3,10 @@
  * Project Name: cpp-Iot23-algorithms
  * Author: Simon Thorell
  * Date Created: 2023-12-26
- * Last Modified: 2023-12-26
+ * Last Modified: 2023-01-03
  * Description: This file contains the main execution loop for the exam in the
  *              course 'Datastructures and Algorithms' for IoT23 at Nackademin,
- *              Stockholm, Sweden. It initializes the system and manages the 
- *              main application lifecycle.
- * License: MIT License
+ *              Stockholm, Sweden. 
  ******************************************************************************/
 
 // Include standard libraries
@@ -39,19 +37,6 @@ int main() {
 //                              Utility Functions
 //=============================================================================
 
-void displayMenu() {
-    std::cout << "================== Menu ==================\n";
-    std::cout << "1. Part 1 - Sensor Data (Altitude)\n";
-    std::cout << "2. Part 2 - Sensor Data (Speed)\n";
-    std::cout << "3. Part 3 - Sensor Data (Fuel Consumption)\n";
-    std::cout << "4. Part 4 - Queue Simulator\n";
-    std::cout << "5. Part 5 - ATM Simulator\n";
-    std::cout << "6. Part 6 - LRU Cache\n";
-    std::cout << "7. Exit\n";
-    std::cout << "==========================================\n";
-    std::cout << "Select an option (1-4): ";
-}
-
 int runMenuLoop() {
     char exec = 0; // 0 = success, 1 = failure
     char choice;
@@ -66,14 +51,8 @@ int runMenuLoop() {
 
         switch (choice)
         {
-        case '1':
-            exec = sensor_data();
-            break;
-        case '2':
-            exec = sensor_data();
-            break;
-        case '3':
-            exec = sensor_data();
+        case '1': case '2': case '3':
+            exec = sensor_data(choice);
             break;
         case '4':
             exec = queue_simulator();
@@ -93,4 +72,17 @@ int runMenuLoop() {
     }
     // Return 0 if exited successfully using 'exit', otherwise return 1
     return exit ? 0 : 1;
+}
+
+void displayMenu() {
+    std::cout << "================== Menu ==================\n";
+    std::cout << "1. Part 1 - Sensor Data (Altitude)\n";
+    std::cout << "2. Part 2 - Sensor Data (Max Speed)\n";
+    std::cout << "3. Part 3 - Sensor Data (Fuel Consumption)\n";
+    std::cout << "4. Part 4 - Queue Simulator\n";
+    std::cout << "5. Part 5 - ATM Simulator\n";
+    std::cout << "6. Part 6 - LRU Cache\n";
+    std::cout << "7. Exit\n";
+    std::cout << "==========================================\n";
+    std::cout << "Select an option (1-7): ";
 }

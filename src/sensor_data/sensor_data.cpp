@@ -1,4 +1,5 @@
 #include "sensor_data/sensor_data.h"
+#include "sensor_data/sensor_data_processor.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -63,12 +64,17 @@ std::time_t CreateTime(int year, int month, int day, int hour, int minute,
 //                        Main Functions Implementations
 //=============================================================================
 
-int sensor_data() {
+int sensor_data(char menuSelection) {
 	std::vector<SensorData> sensorData;
 	FillData(sensorData);
 
-	// TODO: Process sensor data...
-    std::cout << "Hello from sensor_data!\n";
+	// Create an instance of SensorDataProcessor with the filled sensor data
+	SensorDataProcessor processor(sensorData);
+
+	// Process the data based on the menu selection
+	if (menuSelection == '1') processor.countAltitudeData();
+	else if (menuSelection == '2') processor.checkMaxSpeed();
+	else if (menuSelection == '3') processor.updateFuelConsumption();
 
 	return 0; // execution success
 }

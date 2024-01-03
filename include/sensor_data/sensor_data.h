@@ -43,6 +43,6 @@ time_t CreateTime(int year, int month, int day, int hour, int minute,
 //                          Main Interface Functions
 //=============================================================================
 
-int sensor_data();
+int sensor_data(char menuSelection);
 
 #endif // SENSOR_DATA_H
