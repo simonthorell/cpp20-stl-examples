@@ -65,6 +65,9 @@ std::time_t CreateTime(int year, int month, int day, int hour, int minute,
 //=============================================================================
 
 int sensor_data(char menuSelection) {
+	constexpr float MAX_SPEED = 99.9f;
+	constexpr float FUEL_CONSUMPTION_FACTOR = 1.75f;
+
 	std::vector<SensorData> sensorData;
 	FillData(sensorData);
 
@@ -77,13 +80,13 @@ int sensor_data(char menuSelection) {
 		std::cout << "Altitude readings: " << processor.countAltitudeData() << std::endl;
 		break;
 	case '2':
-		if (processor.checkMaxSpeed(99.9f))
+		if (processor.checkMaxSpeed(MAX_SPEED))
 			std::cout << "Max speed reached" << std::endl;
 		else
 			std::cout << "Max speed not reached" << std::endl;
 		break;
 	case '3':
-		if (processor.updateFuelConsumption(1.75f))
+		if (processor.updateFuelConsumption(FUEL_CONSUMPTION_FACTOR))
 			std::cout << "Fuel consumption updated" << std::endl;
 		else
 			std::cout << "Fuel consumption not updated" << std::endl;
