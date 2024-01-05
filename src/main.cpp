@@ -60,9 +60,11 @@ int runMenuLoop() {
             exec = simulator.Run();
             break;
         }
-        case '5':
-            exec = atm_simulator();
+        case '5': {
+            ATMSimulator simulator;
+            exec = simulator.Run();
             break;
+        }
         case '6':
             exec = lru_cache();
             break;

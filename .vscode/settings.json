@@ -77,6 +77,10 @@
     "queue": "cpp",
     "semaphore": "cpp",
     "stack": "cpp",
-    "stop_token": "cpp"
+    "stop_token": "cpp",
+    "__tree": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "unordered_set": "cpp"
 }
 }
