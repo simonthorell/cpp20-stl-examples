@@ -4,19 +4,15 @@
 #include <map>
 
 class ATMSimulator {
-public:
-    // Constructor
-    ATMSimulator();
-    // Main Function
-    char Run();
 private:
-    // ATM Variables
     int accountNumber;
     double balance;
     char transactionType;
-
-    // Initialize some random bank accounts in the map
     std::map<int, double> bankAccounts;
+
+public:
+    ATMSimulator(); // Constructor
+    char Run(); // Main Method
 
     // Utility Methods
     int GetAccountNumber();
@@ -25,6 +21,7 @@ private:
     void CreateAccount();
     void DeleteAccount();
 
+private:
     // ATM Display Methods (TODO: Move to a separate class?)
     void InputAccountNumber();
     void InputTransactionType();

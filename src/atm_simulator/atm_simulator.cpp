@@ -1,5 +1,6 @@
 #include "atm_simulator/atm_simulator.h"
 #include <iostream>
+#include <cctype>   // For toupper()
 
 //=============================================================================
 //                      Constructor for ATM Simulator Class
@@ -7,12 +8,9 @@
 
 ATMSimulator::ATMSimulator () {
     // Initialize some random bank accounts in the map
-    bankAccounts[123456] = 1000.0;
-    bankAccounts[234567] = 2000.0;
-    bankAccounts[345678] = 3000.0;
-
-    // Initialize balance to 0.0
-    balance = 0.0;
+    bankAccounts[1] = 1000.0; // Account number 1 with balance $1000.0
+    bankAccounts[2] = 2000.0; // Account number 2 with balance $2000.0
+    bankAccounts[3] = 3000.0; // Account number 3 with balance $3000.0
 }
 
 //=============================================================================
@@ -30,6 +28,11 @@ char ATMSimulator::Run () {
     while (transactionType != 'Q') {
         InputTransactionType();
     }
+
+    // Reset variables for next ATM user
+    accountNumber = 0;
+    balance = 0.0;
+    transactionType = '0';
 
     return 0;
 }
@@ -50,15 +53,38 @@ void ATMSimulator::SetBalance (double balance) {
     this->balance = balance;
 }
 
-void ATMSimulator::CreateAccount () {
-    // TODO: Implement
-    /* Using map accounts are always sorted based on their keys in ascending order. 
-     * So, if we want to create a new account, we can simply use the last key in
-    * the map and increment it by 1. */
+void ATMSimulator::CreateAccount() {
+    // Generate a new account number by finding the highest existing 
+    // account number and adding 1.
+    int newAccountNumber = bankAccounts.rbegin()->first + 1;
+
+    // Set the initial balance of the new account.
+    double initialBalance = 0.0;
+    
+    // Insert the new account into the bankAccounts map.
+    bankAccounts[newAccountNumber] = initialBalance;
+
+    std::cout << "New account created successfully. Account Number: " 
+              << newAccountNumber << " with balance $" << initialBalance 
+              << "\n";
 }
 
-void ATMSimulator::DeleteAccount () {
-    // TODO: Implement
+void ATMSimulator::DeleteAccount() {
+    // Prompt the user for the account number to delete.
+    std::cout << "Enter the account number you wish to delete: ";
+    int accountToDelete;
+    std::cin >> accountToDelete;
+
+    // Check if the account exists.
+    if (bankAccounts.find(accountToDelete) != bankAccounts.end()) {
+        // Delete the account.
+        bankAccounts.erase(accountToDelete);
+        std::cout << "Account " << accountToDelete 
+                  << " has been successfully deleted.\n";
+    } else {
+        // Account number not found.
+        std::cout << "Account number " << accountToDelete << " does not exist.\n";
+    }
 }
 
 //=============================================================================
@@ -70,7 +96,14 @@ void ATMSimulator::InputAccountNumber() {
         std::cout << "Please enter your account number: ";
         std::cin >> accountNumber;
         if (bankAccounts.find(accountNumber) == bankAccounts.end()) {
-            std::cout << "Invalid account number. Please try again.\n";
+            std::cout << "Account number not found. Create new account? (Y/N)\n";
+            char createNewAccount;
+            std::cin >> createNewAccount;
+            if (createNewAccount == 'Y') {
+                CreateAccount();
+            } else {
+                std::cout << "Please enter account number again.\n";
+            }
         } else {
             break;
         }
@@ -82,8 +115,10 @@ void ATMSimulator::InputTransactionType() {
 
     while (true) {
         std::cout << "Please enter your transaction type " << types;
+        char input;
+        std::cin >> input;
+        transactionType = toupper(input);
 
-        std::cin >> transactionType;
         if (transactionType == 'B' || transactionType == 'D' || 
             transactionType == 'W' || transactionType == 'Q') {
                 ProcessTransaction();
