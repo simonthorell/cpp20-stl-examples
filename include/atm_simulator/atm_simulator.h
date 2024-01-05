@@ -2,6 +2,7 @@
 #define ATM_SIMULATOR_H
 
 #include <map>
+#include <cstdint>
 
 class ATMSimulator {
 private:
@@ -24,6 +25,7 @@ public:
 private:
     // ATM Display Methods (TODO: Move to a separate class?)
     void InputAccountNumber();
+    void AccountMenu();
     void InputTransactionType();
     void ProcessTransaction();
     void HandleBalanceInquiry();
