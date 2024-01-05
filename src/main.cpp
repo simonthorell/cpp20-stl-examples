@@ -56,6 +56,7 @@ int runMenuLoop() {
             exec = sensor_data(choice);
             break;
         case '4': {
+            // TODO: Take target values as arguments
             QueueSimulator simulator;
             exec = simulator.Run();
             break;
@@ -65,9 +66,13 @@ int runMenuLoop() {
             exec = simulator.Run();
             break;
         }
-        case '6':
-            exec = lru_cache();
+        case '6': {
+            // TODO: Take target values as arguments 
+            // (100000 random players in file + 10 LRU cache capacity)
+            LRUCache lruCache(10);
+            exec = lruCache.Run();
             break;
+        }
         case '7':
             exit = true;
             break;
