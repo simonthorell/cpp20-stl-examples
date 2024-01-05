@@ -96,31 +96,38 @@ protected:
 // reading scenarios.
 
 TEST(SensorDataProcessorTest, CountAltitudeData) {
-    // Define the target times
-    std::time_t targetTimeStart = CreateTime(2012, 1, 2, 0, 0, 0);
-    std::time_t targetTimeEnd = CreateTime(2012, 1, 3, 0, 0, 0);
+    // Define target date
+    constexpr u_int16_t YEAR = 2012;
+    constexpr u_int8_t MONTH = 1;
+    constexpr u_int8_t DAY = 2;
+    // Define target start time
+    std::time_t targetTimeStart = CreateTime(YEAR, MONTH, DAY, 0, 0, 0);
+    // Define target end time
+    struct tm nextDay = *localtime(&targetTimeStart);
+    nextDay.tm_mday += 1;  // Move to the next day
+    std::time_t targetTimeEnd = mktime(&nextDay);
     
     // Create a processor with mock data
     auto data = CreateMockSensorData(5000, targetTimeStart, targetTimeEnd);
     SensorDataProcessor processor(data);
 
     // Test counting exactly 5000 altitude data entries
-    EXPECT_EQ(processor.countAltitudeData(), 5000);
+    EXPECT_EQ(processor.countAltitudeData(YEAR, MONTH, DAY), 5000);
 
     // Test counting more than 5000 altitude data entries
     data = CreateMockSensorData(5500, targetTimeStart, targetTimeEnd);
     processor = SensorDataProcessor(data);
-    EXPECT_EQ(processor.countAltitudeData(), 5500);
+    EXPECT_EQ(processor.countAltitudeData(YEAR, MONTH, DAY), 5500);
 
     // Test counting fewer than 5000 altitude data entries
     data = CreateMockSensorData(4500, targetTimeStart, targetTimeEnd);
     processor = SensorDataProcessor(data);
-    EXPECT_EQ(processor.countAltitudeData(), 4500);
+    EXPECT_EQ(processor.countAltitudeData(YEAR, MONTH, DAY), 4500);
 
     // Test counting with no altitude data entries
     data.clear();
     processor = SensorDataProcessor(data);
-    EXPECT_EQ(processor.countAltitudeData(), 0);
+    EXPECT_EQ(processor.countAltitudeData(YEAR, MONTH, DAY), 0);
 }
 
 //==============================================================================

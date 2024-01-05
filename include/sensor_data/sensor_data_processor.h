@@ -11,7 +11,7 @@ public:
     explicit SensorDataProcessor(const std::vector<SensorData>& data);
 
     // Function to count altitude data
-    int countAltitudeData();
+    int countAltitudeData(uint16_t year, uint8_t month, uint8_t day);
 
     // Function to check max speed
     bool checkMaxSpeed(float maxSpeed);

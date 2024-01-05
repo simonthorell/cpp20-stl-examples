@@ -15,11 +15,13 @@ SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data)
 // Description: Counts and prints the number of altitude data entries from a 
 //              specific date (2012-01-02).
 //=============================================================================
-int SensorDataProcessor::countAltitudeData() {
+int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t day) {
     // Start of the target day (2012-01-02 00:00:00)
-    std::time_t targetTimeStart = CreateTime(2012, 1, 2, 0, 0, 0);
+    std::time_t targetTimeStart = CreateTime(year, month, day, 0, 0, 0);
     // Start of the next day (2012-01-03 00:00:00)
-    std::time_t targetTimeEnd = CreateTime(2012, 1, 3, 0, 0, 0);
+    struct tm nextDay = *localtime(&targetTimeStart);
+    nextDay.tm_mday += 1;  // Move to the next day
+    std::time_t targetTimeEnd = mktime(&nextDay);
 
     int altitudeDataCount = std::ranges::count_if(sensorData, [targetTimeStart, targetTimeEnd](SensorData& data) {
         std::time_t dataTime = data.GetTime();

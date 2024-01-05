@@ -65,6 +65,9 @@ std::time_t CreateTime(int year, int month, int day, int hour, int minute,
 //=============================================================================
 
 int sensor_data(char menuSelection) {
+	constexpr uint16_t YEAR = 2012;
+	constexpr uint8_t MONTH = 1;
+	constexpr uint8_t DAY = 2;
 	constexpr float MAX_SPEED = 99.9f;
 	constexpr float FUEL_CONSUMPTION_FACTOR = 1.75f;
 
@@ -77,7 +80,9 @@ int sensor_data(char menuSelection) {
 	// Perform the requested operation
 	switch (menuSelection) {
 	case '1':
-		std::cout << "Altitude readings: " << processor.countAltitudeData() << std::endl;
+		std::cout << "Altitude readings: " 
+		          << processor.countAltitudeData(YEAR, MONTH, DAY) 
+			      << std::endl;
 		break;
 	case '2':
 		if (processor.checkMaxSpeed(MAX_SPEED))
