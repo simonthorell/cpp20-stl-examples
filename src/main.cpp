@@ -52,11 +52,14 @@ int runMenuLoop() {
         switch (choice)
         {
         case '1': case '2': case '3':
+            // TODO: Create App Class and move sensor_data() to it
             exec = sensor_data(choice);
             break;
-        case '4':
-            exec = queue_simulator();
+        case '4': {
+            QueueSimulator simulator;
+            exec = simulator.Run();
             break;
+        }
         case '5':
             exec = atm_simulator();
             break;
