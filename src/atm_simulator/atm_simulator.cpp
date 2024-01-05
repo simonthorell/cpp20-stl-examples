@@ -2,7 +2,7 @@
 #include <iostream>
 
 //=============================================================================
-//                                ATM Simulator
+//                      Constructor for ATM Simulator Class
 //=============================================================================
 
 ATMSimulator::ATMSimulator () {
@@ -16,7 +16,7 @@ ATMSimulator::ATMSimulator () {
 }
 
 //=============================================================================
-//                                Main Function
+//                               Class Main Method
 //=============================================================================
 
 char ATMSimulator::Run () {
@@ -35,7 +35,7 @@ char ATMSimulator::Run () {
 }
 
 //=============================================================================
-//                              Utility Functions
+//                              Utility Methods
 //=============================================================================
 
 int ATMSimulator::GetAccountNumber () {
@@ -62,7 +62,7 @@ void ATMSimulator::DeleteAccount () {
 }
 
 //=============================================================================
-//                            ATM Display Functions
+//                            ATM Display Methods
 //=============================================================================
 
 void ATMSimulator::InputAccountNumber() {

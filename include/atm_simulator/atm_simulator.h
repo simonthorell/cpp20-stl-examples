@@ -18,14 +18,14 @@ private:
     // Initialize some random bank accounts in the map
     std::map<int, double> bankAccounts;
 
-    // Utility Functions
+    // Utility Methods
     int GetAccountNumber();
     double GetBalance();
     void SetBalance(double balance);
     void CreateAccount();
     void DeleteAccount();
 
-    // ATM Display Functions (TODO: Move to a separate class?)
+    // ATM Display Methods (TODO: Move to a separate class?)
     void InputAccountNumber();
     void InputTransactionType();
     void ProcessTransaction();
