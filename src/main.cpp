@@ -68,8 +68,7 @@ int runMenuLoop() {
             break;
         }
         case '6': {
-            // TODO: Take target values as arguments 
-            // (100000 random players in file + 10 LRU cache capacity)
+            // File will be generated in folder build/src/hockey_players.txt
             HockeyApp app(10, "hockey_players.txt");
             app.run();
             break;
