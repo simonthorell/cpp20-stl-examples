@@ -8,6 +8,11 @@
 //=============================================================================
 ATMSimulator::ATMSimulator(std::shared_ptr<AccountManager> manager) : manager(manager) {}
 
+//=============================================================================
+// Function: displayMenu
+// Description: Displays the ATM menu.
+//=============================================================================
+
 void ATMSimulator::displayMenu() {
     std::cout << "ATM Menu:\n";
     std::cout << "1. Deposit\n";
