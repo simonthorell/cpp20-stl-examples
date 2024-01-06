@@ -11,14 +11,16 @@ class LRUCache {
     std::list<int> lruList; // Store keys of cache
     // Map id to data and iterator to lruList
     std::unordered_map<int, std::pair<T*, typename std::list<int>::iterator>> cacheMap;
-
 public:
+    // Constructor
     LRUCache(int capacity);
+    // Destructor
     ~LRUCache();
+    // Class Methods
     T* getPlayer(int id);
     void refer(int id, T* player);
     
-    // TODO: Fix this
+    // TODO: Fix this - Move to cpp file?
     bool isEmpty() const {
     return lruList.empty();
     }

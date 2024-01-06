@@ -10,7 +10,7 @@ public:
     int jersey;
     std::string teamName;
     
-    // Default constructor
+    // Default constructor (TODO/Understand: Why do we need this?)
     HockeyPlayer() : id(0), jersey(0) {}  // Default constructor
 
     // Custom constructor

@@ -29,6 +29,25 @@ HockeyApp::~HockeyApp() {
     delete cache; // clear the cache on destruction
 }
 //=============================================================================
+// Method: run
+// Description: Runs the HockeyApp.
+//=============================================================================
+void HockeyApp::run() {
+    int choice;
+    do {
+        printMenu();
+        std::cin >> choice;
+        switch (choice) {
+            case 1: showPlayersInCache(); break;
+            case 2: searchPlayerByID(); break;
+            case 3: searchPlayerByName(); break;
+            case 4: searchPlayerByJersey(); break;
+            case 0: break;
+            default: std::cout << "Invalid option. Please try again.\n";
+        }
+    } while (choice != 0);
+}
+//=============================================================================
 // Method: generateRandomPlayers
 // Description: Generates 100,000 random hockey players and saves them to file.
 //=============================================================================
@@ -174,23 +193,4 @@ void HockeyApp::searchPlayerByJersey() {
     std::cout << "Enter Jersey Number: ";
     std::cin >> jersey;
     // TODO: Implement search by jersey number
-}
-//=============================================================================
-// Method: run
-// Description: Runs the HockeyApp.
-//=============================================================================
-void HockeyApp::run() {
-    int choice;
-    do {
-        printMenu();
-        std::cin >> choice;
-        switch (choice) {
-            case 1: showPlayersInCache(); break;
-            case 2: searchPlayerByID(); break;
-            case 3: searchPlayerByName(); break;
-            case 4: searchPlayerByJersey(); break;
-            case 0: break;
-            default: std::cout << "Invalid option. Please try again.\n";
-        }
-    } while (choice != 0);
 }
