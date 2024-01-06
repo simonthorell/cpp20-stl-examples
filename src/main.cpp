@@ -16,7 +16,7 @@
 #include "sensor_data/sensor_data.h"
 #include "queue_simulator/queue_simulator.h"
 #include "atm_simulator/atm_simulator.h"
-#include "lru_cache/lru_cache.h"
+#include "lru_cache/hockey_app.h"
 
 // Declare utility functions
 void displayMenu();
@@ -70,8 +70,8 @@ int runMenuLoop() {
         case '6': {
             // TODO: Take target values as arguments 
             // (100000 random players in file + 10 LRU cache capacity)
-            LRUCache lruCache(10);
-            exec = lruCache.Run();
+            HockeyApp app(10, "hockey_players.txt");
+            app.run();
             break;
         }
         case '0':

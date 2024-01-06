@@ -1,46 +1,38 @@
 #include "lru_cache/lru_cache.h"
-#include <iostream>
 
-//==============================================================================
-// Constructor
-//==============================================================================
+template <typename T>
+LRUCache<T>::LRUCache(int capacity) : capacity(capacity) {}
 
-LRUCache::LRUCache(int capacity) : capacity(capacity) {}
-
-//==============================================================================
-// Public Methods
-//==============================================================================
-
-int LRUCache::Run() {
-    // TODO: Implement user interface
-    std::cout << "LRU Cache Simulator" << std::endl;
-    return 0;
+template <typename T>
+LRUCache<T>::~LRUCache() {
+    for (auto &pair : cacheMap) {
+        delete pair.second.first;
+    }
 }
 
-//==============================================================================
-// Private Methods
-//==============================================================================
+template <typename T>
+T* LRUCache<T>::getPlayer(int id) {
+    if (cacheMap.find(id) == cacheMap.end())
+        return nullptr;
+    refer(id, cacheMap[id].first);
+    return cacheMap[id].first;
+}
 
-const HockeyPlayer* LRUCache::getPlayer(int id) {
-    if (cacheMap.find(id) != cacheMap.end()) {
-        // Player is in cache, move it to the front
-        auto it = cacheMap[id];
-        cache.splice(cache.begin(), cache, it);
-        return &(*it);
+template <typename T>
+void LRUCache<T>::refer(int id, T* player) {
+    if (cacheMap.find(id) == cacheMap.end()) {
+        if (lruList.size() == capacity) {
+            int last = lruList.back();
+            lruList.pop_back();
+            delete cacheMap[last].first;
+            cacheMap.erase(last);
+        }
     } else {
-        // Player not in cache, read from file (simulated) and add to cache
-        HockeyPlayer player(id, "PlayerName", 88, "TeamName");
-        addToCache(player);
-        return &cache.front();
+        lruList.erase(cacheMap[id].second);
     }
+    lruList.push_front(id);
+    cacheMap[id] = {player, lruList.begin()};
 }
 
-void LRUCache::addToCache(const HockeyPlayer& player) {
-    if (cache.size() >= capacity) {
-        // Remove the least recently used player
-        cacheMap.erase(cache.back().getId());
-        cache.pop_back();
-    }
-    cache.push_front(player);
-    cacheMap[player.getId()] = cache.begin();
-}
+// Explicit template instantiation
+template class LRUCache<HockeyPlayer>;
