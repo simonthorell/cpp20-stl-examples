@@ -9,7 +9,8 @@ template <typename T>
 class LRUCache {
     int capacity;
     std::list<int> lruList; // Store keys of cache
-    std::unordered_map<int, std::pair<T*, typename std::list<int>::iterator>> cacheMap; // Map id to data and iterator to lruList
+    // Map id to data and iterator to lruList
+    std::unordered_map<int, std::pair<T*, typename std::list<int>::iterator>> cacheMap;
 
 public:
     LRUCache(int capacity);
