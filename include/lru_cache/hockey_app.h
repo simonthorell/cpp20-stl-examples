@@ -12,6 +12,7 @@ class HockeyApp {
     std::string filename;
 
     void generateRandomPlayers();
+    void populateCacheWithRandomPlayers();
     void loadPlayersFromFile();
     HockeyPlayer parsePlayerLine(const std::string& line);
     void printMenu();

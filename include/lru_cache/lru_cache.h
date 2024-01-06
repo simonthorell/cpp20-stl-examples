@@ -16,6 +16,15 @@ public:
     ~LRUCache();
     T* getPlayer(int id);
     void refer(int id, T* player);
+    
+    // TODO: Fix this
+    bool isEmpty() const {
+    return lruList.empty();
+    }
+
+    const std::list<int>& getLRUList() const {
+        return lruList;
+    }
 };
 
 #endif // LRU_CACHE_H

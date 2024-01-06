@@ -16,6 +16,7 @@ HockeyApp::HockeyApp(int cacheSize, const std::string& filename)
         generateRandomPlayers();
     }
     loadPlayersFromFile();
+    populateCacheWithRandomPlayers();
 }
 
 HockeyApp::~HockeyApp() {
@@ -39,6 +40,30 @@ void HockeyApp::generateRandomPlayers() {
               << filename << std::endl;
 }
 //=============================================================================
+// Method: populateCacheWithRandomPlayers
+// Description: Populates the cache with "cacheSize" random players.
+//=============================================================================
+void HockeyApp::populateCacheWithRandomPlayers() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, allPlayers.size() - 1);
+
+    std::vector<int> keys;
+    for (const auto& pair : allPlayers) {
+        keys.push_back(pair.first);
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        int randomIndex = dis(gen);
+        int key = keys[randomIndex];
+        HockeyPlayer player = allPlayers[key];
+        cache->refer(key, new HockeyPlayer(player.id, player.name, player.jersey, player.teamName));
+    }
+
+    std::cout << "Populated cache with 10 random players from the file." << std::endl;
+}
+
+//=============================================================================
 // Methods: loadPlayersFromFile, parsePlayerLine
 // Description: Loads players from file into allPlayers map then parse them.
 //=============================================================================
@@ -57,7 +82,11 @@ HockeyPlayer HockeyApp::parsePlayerLine(const std::string& line) {
     std::string name, teamName;
     char delim;
 
-    iss >> id >> delim >> name >> delim >> jersey >> delim >> teamName;
+    iss >> id >> delim;  // Read the ID and the delimiter (,)
+    std::getline(iss, name, ',');  // Read the name up to the next comma
+    iss >> jersey >> delim;  // Read the jersey number and the next delimiter
+    std::getline(iss, teamName);  // Read the rest of the line as the team name
+
     return HockeyPlayer(id, name, jersey, teamName);
 }
 //=============================================================================
@@ -77,7 +106,21 @@ void HockeyApp::printMenu() {
 
 void HockeyApp::showPlayersInCache() {
     std::cout << "\n-- Players in Cache --\n";
-    // Implement showing players in cache
+
+    if (cache->isEmpty()) {
+        std::cout << "Cache is empty.\n";
+        return;
+    }
+
+    int count = 0;
+    for (const int id : cache->getLRUList()) {
+        HockeyPlayer* player = cache->getPlayer(id);
+        if (player) {
+            std::cout << "Cache Entry " << ++count << ": ID: " << player->id << ", Name: " << player->name 
+                      << ", Jersey: " << player->jersey << ", Team: " << player->teamName << "\n";
+        }
+    }
+    std::cout << "Total players in cache: " << count << "\n";
 }
 
 void HockeyApp::searchPlayerByID() {
@@ -89,7 +132,16 @@ void HockeyApp::searchPlayerByID() {
         std::cout << "Player found in cache: " << player->name << std::endl;
     } else if (allPlayers.find(id) != allPlayers.end()) {
         std::cout << "Player found in file: " << allPlayers[id].name << std::endl;
-        // Consider adding player to cache here
+
+        // Create a copy of the player from the file
+        HockeyPlayer filePlayer = allPlayers[id];
+        // Dynamically allocate a new player (ensure your cache is set up to manage this memory properly!)
+        HockeyPlayer* newPlayer = new HockeyPlayer(filePlayer.id, filePlayer.name, filePlayer.jersey, filePlayer.teamName);
+
+        // Add the new player to the cache
+        cache->refer(id, newPlayer);
+
+        std::cout << "Player added to cache." << std::endl;
     } else {
         std::cout << "Player not found." << std::endl;
     }
