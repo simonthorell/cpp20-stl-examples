@@ -3,6 +3,10 @@
 #include "atm_simulator/atm_simulator.h"
 #include "atm_simulator/account_manager.h"
 
+//=============================================================================
+// Class: MockAccountManager
+// Description: Mock class for AccountManager
+//=============================================================================
 class MockAccountManager : public AccountManager {
 public:
     MOCK_METHOD(void, createAccount, (int, double), (override));
@@ -11,9 +15,26 @@ public:
     MOCK_METHOD(bool, withdraw, (int, double), (override));
     MOCK_METHOD(std::shared_ptr<Account>, getAccount, (int), (override));
 };
+//=============================================================================
+// Test Fixture: AccountManagerTest
+// Description: Provides common setup and teardown functionality for 
+//              AccountManager tests.
+//=============================================================================
+// TODO: Add tests for AccountManager class
 
+//=============================================================================
+// Test Fixture: AccountTest
+// Description: Provides common setup and teardown functionality for Account
+//              tests.
+//=============================================================================
+// TODO: Add tests for Account class
+
+//=============================================================================
+// Test Fixture: ATMSimulatorTest
+// Description: Provides common setup and teardown functionality for ATM tests.
+//=============================================================================
 // Test for deposit functionality
-TEST(ATMTest, DepositMoney) {
+TEST(ATMSimulatorTest, DepositMoneyUI) {
     auto mockManager = std::make_shared<MockAccountManager>();
     ATMSimulator atm(mockManager);
 
@@ -26,13 +47,14 @@ TEST(ATMTest, DepositMoney) {
 
     // Set expectations for the mockManager
     EXPECT_CALL(*mockManager, getAccount(testAccountNumber))
-        .WillOnce(testing::Return(mockAccount)); // Return the mock account when getAccount is called
+        // Return the mock account when getAccount is called
+        .WillOnce(testing::Return(mockAccount)); 
     EXPECT_CALL(*mockManager, deposit(testAccountNumber, depositAmount))
         .Times(1); // Expect deposit to be called once
 
     // Simulate user input for depositing money
     std::stringstream input;
-    input << testAccountNumber << "\n1\n" << depositAmount << "\n0"; // Corrected line breaks
+    input << testAccountNumber << "\n1\n" << depositAmount << "\n0";
 
     // Save the original state of cin
     auto originalBuffer = std::cin.rdbuf();
@@ -40,49 +62,71 @@ TEST(ATMTest, DepositMoney) {
 
     atm.run(); // Run the ATM simulator
 
-    // Further assertions can be added here if needed
+    // TODO: Add additional assertions here...
 
     // Reset std::cin to its original state
     std::cin.rdbuf(originalBuffer);
 }
 
-// // Test for withdraw functionality
-// TEST(ATMTest, WithdrawMoney) {
-//     auto mockManager = std::make_shared<MockAccountManager>();
-//     ATMSimulator atm(mockManager);
+// Test for withdraw functionality
+TEST(ATMSimulatorTest, WithdrawMoneyUI) {
+    auto mockManager = std::make_shared<MockAccountManager>();
+    ATMSimulator atm(mockManager);
 
-//     int testAccountNumber = 123456;
-//     double withdrawalAmount = 200.0;
+    int testAccountNumber = 223456;
+    double withdrawalAmount = 200.0;
+    double initialBalance = 1000.0; // Initial balance
 
-//     EXPECT_CALL(*mockManager, withdraw(testAccountNumber, withdrawalAmount)).WillOnce(testing::Return(true));
+    // Create and set expectation for mock account
+    auto mockAccount = std::make_shared<Account>(testAccountNumber, 
+                                                 initialBalance);
+    EXPECT_CALL(*mockManager, getAccount(testAccountNumber))
+        .WillOnce(testing::Return(mockAccount));
+    EXPECT_CALL(*mockManager, withdraw(testAccountNumber, withdrawalAmount))
+        .WillOnce(testing::Return(true));
 
-//     // Simulate user input for withdrawing money
-//     std::stringstream input;
-//     input << testAccountNumber << "\\n2\\n" << withdrawalAmount << "\\n0";
-//     std::cin.rdbuf(input.rdbuf());
+    // Simulate user input for withdrawing money
+    std::stringstream input;
+    input << testAccountNumber << "\n2\n" << withdrawalAmount << "\n0";
 
-//     atm.run();
+    // Save and redirect cin
+    auto originalBuffer = std::cin.rdbuf();
+    std::cin.rdbuf(input.rdbuf()); 
 
-//     // Further assertions can be added here if needed
-// }
+    atm.run(); // Run the ATM simulator
 
-// // Test for checking balance
-// TEST(ATMTest, CheckBalance) {
-//     auto mockManager = std::make_shared<MockAccountManager>();
-//     ATMSimulator atm(mockManager);
+    // TODO: Add additional assertions...
 
-//     int testAccountNumber = 12345;
-//     double expectedBalance = 1000.0;
+    // Reset std::cin to its original state
+    std::cin.rdbuf(originalBuffer);
+}
 
-//     auto mockAccount = std::make_shared<Account>(testAccountNumber, expectedBalance);
-//     EXPECT_CALL(*mockManager, getAccount(testAccountNumber)).WillOnce(testing::Return(mockAccount));
+// Test for check balance functionality
+TEST(ATMSimulatorTest, CheckBalanceUI) {
+    auto mockManager = std::make_shared<MockAccountManager>();
+    ATMSimulator atm(mockManager);
 
-//     // Simulate user input for checking balance
-//     std::stringstream input;
-//     input << testAccountNumber << "\\n3\\n0";
-//     std::cin.rdbuf(input.rdbuf());
+    int testAccountNumber = 323456;
+    double expectedBalance = 1038.0;
 
-//     atm.run();
+    // Create and set expectation for mock account
+    auto mockAccount = std::make_shared<Account>(testAccountNumber, 
+                                                 expectedBalance);
+    EXPECT_CALL(*mockManager, getAccount(testAccountNumber))
+        .WillRepeatedly(testing::Return(mockAccount));
 
-//     // Further assertions can be added here if needed
-// }
+    // Simulate user input for checking balance
+    std::stringstream input;
+    input << testAccountNumber << "\n3\n0"; // Corrected line breaks
+
+    // Save and redirect cin
+    auto originalBuffer = std::cin.rdbuf();
+    std::cin.rdbuf(input.rdbuf());
+
+    atm.run(); // Run the ATM simulator
+
+    // TODO: Add additional assertions...
+
+    // Reset std::cin to its original state
+    std::cin.rdbuf(originalBuffer);
+}
