@@ -1,6 +1,7 @@
 # C++20 STL and Algorithms: An In-depth Guide
 
-This repository is dedicated to exploring the features and capabilities of the modern C++20 Standard Template Library (STL) and various algorithms. It demonstrates practical applications and problem-solving techniques using the latest C++ standards. The project structure and initial setup were inspired by and created with [this template](https://github.com/simonthorell/cpp-cmake-googletest.git). If you get inspired by this repo you need to checkout the github of this incredible programmer: [Stefan Holmberg](https://github.com/aspcodenet).
+This repository is dedicated to exploring the features and capabilities of the modern C++20 Standard Template Library (STL) and various algorithms. It demonstrates practical applications and problem-solving techniques using the latest C++ standards. The project structure and initial setup were inspired by and created with [this template](https://github.com/simonthorell/cpp-cmake-googletest.git).  
+If you get inspired by this repo you need to checkout the github of this incredible programmer: [Stefan Holmberg](https://github.com/aspcodenet).
 
 ## Part 1: Utilizing Algorithms
 
