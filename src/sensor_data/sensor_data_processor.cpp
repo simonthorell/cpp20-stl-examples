@@ -2,14 +2,12 @@
 #include <iostream>
 #include <algorithm>
 #include <ranges>
-
 //=============================================================================
 // Constructor: SensorDataProcessor
 // Description: Initializes the SensorDataProcessor with a vector of SensorData.
 //=============================================================================
 SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data) 
     : sensorData(data) {}
-
 //=============================================================================
 // Function: countAltitudeData
 // Description: Counts and prints the number of altitude data entries from a 
@@ -32,7 +30,6 @@ int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t
     // Return the amount of altitude data entries
     return altitudeDataCount;
 }
-
 //=============================================================================
 // Function: checkMaxSpeed
 // Description: Checks whether any SpeedInKmh data entries exceed 99.9. Iteration
@@ -47,7 +44,6 @@ bool SensorDataProcessor::checkMaxSpeed(float maxSpeed) {
     // Return true once/if any entries exceed the max speed
     return speedReached.begin() != speedReached.end();
 }
-
 //=============================================================================
 // Function: updateFuelConsumption
 // Description: Updates all FuelConsumption data entries by 75%.

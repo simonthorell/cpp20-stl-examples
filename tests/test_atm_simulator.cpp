@@ -1,8 +1,10 @@
+//==============================================================================
+// ATM SIMULATOR TEST SUITE
+//==============================================================================
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "atm_simulator/atm_simulator.h"
 #include "atm_simulator/account_manager.h"
-
 //=============================================================================
 // Class: MockAccountManager
 // Description: Mock class for AccountManager

@@ -74,7 +74,7 @@ int runMenuLoop() {
             exec = lruCache.Run();
             break;
         }
-        case '7':
+        case '0':
             exit = true;
             break;
         default:
@@ -93,7 +93,7 @@ void displayMenu() {
     std::cout << "4. Part 4 - Queue Simulator\n";
     std::cout << "5. Part 5 - ATM Simulator\n";
     std::cout << "6. Part 6 - LRU Cache\n";
-    std::cout << "7. Exit\n";
+    std::cout << "0. Exit\n";
     std::cout << "==========================================\n";
-    std::cout << "Select an option (1-7): ";
+    std::cout << "Select an option (0-6): ";
 }

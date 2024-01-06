@@ -6,26 +6,29 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
-
 //=============================================================================
-//                        Sensor Data Class Implementation
+// Constructor: SensorData
+// Description: Initializes a new instance of SensorData with the given type, 
+//              value, and timestamp.
 //=============================================================================
-
+SensorData::SensorData(SensorType sensorType, float value, std::time_t time) {
+    this->value = value;
+    this->sensorType = sensorType;
+    this->time = time;
+}
+//=============================================================================
+// Getter Methods: GetSensorType, GetValue, SetValue, GetTime
+// Description: Provides access to SensorData's attributes and allows value
+//              modification.
+//=============================================================================
 SensorType SensorData::GetSensorType() { return sensorType; }
 float SensorData::GetValue() { return value; }
 void SensorData::SetValue(float v) { value = v; }
 std::time_t SensorData::GetTime() { return time; }
-
-SensorData::SensorData(SensorType sensorType, float value, std::time_t time) {
-	this->value = value;
-	this->sensorType = sensorType;
-	this->time = time;
-}
-
 //=============================================================================
-//                       Utility Function Implementations
+// Function: FillData
+// Description: Populates a vector with random sensor data readings.
 //=============================================================================
-
 void FillData(std::vector<SensorData>& v) {
 	srand(std::time(NULL));
 
@@ -47,7 +50,10 @@ void FillData(std::vector<SensorData>& v) {
 		tid = tid + rand() % 10 + 1;
 	}
 }
-
+//=============================================================================
+// Function: CreateTime
+// Description: Constructs a time_t object representing the given date and time.
+//=============================================================================
 std::time_t CreateTime(int year, int month, int day, int hour, int minute, 
                        int second) {
 	struct tm tid = { 0 };
@@ -59,11 +65,12 @@ std::time_t CreateTime(int year, int month, int day, int hour, int minute,
 	tid.tm_sec = second;
 	return mktime(&tid);
 }
-
 //=============================================================================
-//                        Main Functions Implementations
+// Function: sensor_data (Main Function)
+// Description: Handles user menu selections to perform operations on sensor 
+//              data such as counting altitude readings, checking maximum 
+//              speed, and updating fuel consumption.
 //=============================================================================
-
 int sensor_data(char menuSelection) {
 	constexpr uint16_t YEAR = 2012;
 	constexpr uint8_t MONTH = 1;

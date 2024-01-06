@@ -10,7 +10,7 @@ public:
     int queueNumber;
     std::string name;
     time_t arrivalTime;
-
+    // Constructor
     Customer(int num, std::string n);
 };
 

@@ -1,12 +1,10 @@
 #include <iostream>
 #include "queue_simulator/queue_simulator.h"
-
 //=============================================================================
 // Constructor: QueueSimulator
 // Description: Initializes the next queue number to 1 for the queue simulator.
 //=============================================================================
 QueueSimulator::QueueSimulator() : nextQueueNumber(1) {}
-
 //=============================================================================
 // Function: Run
 // Description: Runs the main loop of the queue simulator, processing user
@@ -31,7 +29,6 @@ char QueueSimulator::Run() {
     }
     return 0;
 }
-
 //=============================================================================
 // Function: AddCustomer
 // Description: Adds a new customer to the queue with a unique number and
@@ -46,7 +43,6 @@ void QueueSimulator::AddCustomer() {
     std::cout << "Customer " << name << " added to the queue with number " 
               << newCustomer.queueNumber << ".\n";
 }
-
 //=============================================================================
 // Function: CallNextCustomer
 // Description: Calls and removes the next customer from the queue, calculating

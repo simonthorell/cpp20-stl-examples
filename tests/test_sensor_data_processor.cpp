@@ -1,39 +1,17 @@
-/**
- * @file test_sensor_data_processor.cpp
- * 
- * @brief Test suite for the SensorDataProcessor class.
- * 
- * This test suite validates the SensorDataProcessor class, focusing on 
- * its ability to identify when sensor speed readings exceed a given 
- * threshold. It includes tests for empty data sets, data sets with speeds 
- * both below and above the threshold, and edge cases where speeds are 
- * exactly at the threshold.
- * 
- * @note These tests rely on the Google Test framework and assume all 
- * necessary files and dependencies are correctly included and configured 
- * in the project setup. Ensure that the SensorDataProcessor class and all 
- * related components (e.g., SensorData, SensorType) are correctly 
- * implemented and accessible.
- * 
- * @author Simon Thorell
- * @date 2023-01-03
- * 
- * @see sensor_data_processor.h
- */
-
-#include "sensor_data/sensor_data_processor.h"
+//==============================================================================
+// SENSOR DATA TEST SUITE
+//==============================================================================
 #include <gtest/gtest.h>
 #include <vector>
 #include <ctime>
-
+#include "sensor_data/sensor_data_processor.h"
 //==============================================================================
 // Mock Data Creation
+// Description: This section contains the CreateTime function, which generates
+//              a vector of mock SensorData objects for testing purposes. It
+//              simulates realistic sensor data, including altitude readings
+//              and various other types with different timestamps.
 //==============================================================================
-// This section contains the CreateMockSensorData function, which generates 
-// a vector of mock SensorData objects for testing purposes. It simulates 
-// realistic sensor data, including altitude readings and various other types 
-// with different timestamps.
-
 std::time_t now = std::time(nullptr);
 std::time_t today = std::mktime(std::localtime(&now));
 std::time_t yesterday = today - (24 * 60 * 60); // 24 hours ago
@@ -61,15 +39,12 @@ std::vector<SensorData> CreateMockSensorData(int numAltitudeReadings,
 
     return data;
 }
- 
 //==============================================================================
-// Sensor Data Processor Class Tests
+// SensorDataProcessorTest Class
+// Description: This class defines the test fixture for the SensorDataProcessor
+//              class. It sets up the testing environment and includes all the
+//              test cases for the SensorDataProcessor class.
 //==============================================================================
-// This section defines the SensorDataProcessorTest class, which sets up the 
-// testing environment and includes all the test cases for the 
-// SensorDataProcessor class. It ensures the class handles various scenarios 
-// correctly, including edge cases and typical usage patterns.
-
 class SensorDataProcessorTest : public ::testing::Test {
 protected:
     std::vector<SensorData> data;
@@ -86,15 +61,13 @@ protected:
         delete processor;
     }
 };
-
 //==============================================================================
 // Altimeter Data Processing Tests
+// Description: This subsection includes tests focused on verifying the accuracy
+//              and reliability of altitude data processing within the
+//              SensorDataProcessor. It checks for correct altitude count and
+//              handling of various altimeter reading scenarios.
 //==============================================================================
-// This subsection includes tests focused on verifying the accuracy and 
-// reliability of altitude data processing within the SensorDataProcessor. 
-// It checks for correct altitude count and handling of various altimeter 
-// reading scenarios.
-
 TEST(SensorDataProcessorTest, CountAltitudeData) {
     // Define target date
     constexpr u_int16_t YEAR = 2012;
@@ -129,14 +102,13 @@ TEST(SensorDataProcessorTest, CountAltitudeData) {
     processor = SensorDataProcessor(data);
     EXPECT_EQ(processor.countAltitudeData(YEAR, MONTH, DAY), 0);
 }
-
 //==============================================================================
 // Speed Data Processing Tests
+// Description: This subsection includes tests focused on verifying the accuracy
+//              and reliability of speed data processing within the
+//              SensorDataProcessor. It checks for correct speed threshold
+//              handling and reporting.
 //==============================================================================
-// Tests in this subsection verify that the SensorDataProcessor correctly 
-// identifies when speed readings exceed defined thresholds. They cover 
-// scenarios with speeds below, above, and exactly at the threshold.
-
 // Test case for data with valid speed below the threshold
 TEST(SensorDataProcessorTest, ReturnsFalseForValidSpeedBelowThreshold) {
     std::vector<SensorData> data = CreateMockSensorData(5, yesterday, today);
@@ -154,14 +126,13 @@ TEST(SensorDataProcessorTest, ReturnsTrueForValidSpeedAboveThreshold) {
     SensorDataProcessor processor(data); 
     EXPECT_TRUE(processor.checkMaxSpeed(99.9f));
 }
-
 //==============================================================================
-// Fuel Data Processing Tests
+// Fuel Consumption Update Tests
+// Description: This subsection includes tests focused on verifying the accuracy
+//              and reliability of fuel consumption data processing within the
+//              SensorDataProcessor. It checks for correct fuel consumption
+//              update handling and reporting.
 //==============================================================================
-// Here, tests are designed to assess the fuel consumption data processing 
-// capabilities of the SensorDataProcessor. They ensure that fuel data is 
-// correctly interpreted and handled under different conditions and values.
-
 // Test updating when fuel consumption entries are present and factor is not 0
 TEST(SensorDataProcessorTest, UpdatesFuelConsumptionWhenFactorNotZero) {
     // Create mock data with some FuelConsumption entries
