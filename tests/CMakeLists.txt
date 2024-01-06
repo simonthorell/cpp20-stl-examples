@@ -9,8 +9,12 @@ FetchContent_MakeAvailable(googletest)
 
 # Link against gtest or gtest_main as needed
 add_executable(TestMyProject test_main.cpp) # Adjust with your test files
-# target_link_libraries(TestMyProject gtest_main)
-target_link_libraries(TestMyProject gtest_main MyProjectLib)
+
+# # target_link_libraries(TestMyProject gtest_main)
+# target_link_libraries(TestMyProject gtest_main MyProjectLib)
+
+# Link both gmock_main and gtest_main. Use gmock_main for mocking features.
+target_link_libraries(TestMyProject gmock_main gtest_main MyProjectLib)
 
 # Include the directory where header files is located
 target_include_directories(TestMyProject PRIVATE ../include)

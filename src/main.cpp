@@ -62,8 +62,9 @@ int runMenuLoop() {
             break;
         }
         case '5': {
-            ATMSimulator simulator;
-            exec = simulator.Run();
+            auto manager = std::make_shared<AccountManager>(); // Shared AccountManager
+            ATMSimulator atm(manager);
+            exec = atm.run();
             break;
         }
         case '6': {

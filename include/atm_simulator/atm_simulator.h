@@ -1,36 +1,22 @@
 #ifndef ATM_SIMULATOR_H
 #define ATM_SIMULATOR_H
 
-#include <map>
-#include <cstdint>
+#include "atm_simulator/account_manager.h"
 
 class ATMSimulator {
-private:
-    int accountNumber;
-    double balance;
-    char transactionType;
-    std::map<int, double> bankAccounts;
-
 public:
-    ATMSimulator(); // Constructor
-    char Run(); // Main Method
-
-    // Utility Methods
-    int GetAccountNumber();
-    double GetBalance();
-    void SetBalance(double balance);
-    void CreateAccount();
-    void DeleteAccount();
+    // Constructor to initialize the ATM system with the AccountManager
+    ATMSimulator(std::shared_ptr<AccountManager> manager);
+    // Method to start the ATM system
+    char run(); 
 
 private:
-    // ATM Display Methods (TODO: Move to a separate class?)
-    void InputAccountNumber();
-    void AccountMenu();
-    void InputTransactionType();
-    void ProcessTransaction();
-    void HandleBalanceInquiry();
-    void HandleDeposit();
-    void HandleWithdrawal();
+    // Instance of AccountManager
+    std::shared_ptr<AccountManager> manager;
+
+    // Class Methods
+    void displayMenu();
+    void processUserSelection(int selection, int accountNumber);
 };
 
 #endif // ATM_SIMULATOR_H
