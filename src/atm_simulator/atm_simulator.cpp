@@ -7,12 +7,10 @@
 // Description: Initializes the ATM system with the specified AccountManager.
 //=============================================================================
 ATMSimulator::ATMSimulator(std::shared_ptr<AccountManager> manager) : manager(manager) {}
-
 //=============================================================================
-// Function: displayMenu
+// Method: displayMenu
 // Description: Displays the ATM menu.
 //=============================================================================
-
 void ATMSimulator::displayMenu() {
     std::cout << "ATM Menu:\n";
     std::cout << "1. Deposit\n";
@@ -23,7 +21,7 @@ void ATMSimulator::displayMenu() {
     std::cout << "Enter your choice: ";
 }
 //=============================================================================
-// Function: processUserSelection
+// Method: processUserSelection
 // Description: Processes the user's selection from the menu.
 //=============================================================================
 void ATMSimulator::processUserSelection(int selection, int accountNumber) {
@@ -62,7 +60,7 @@ void ATMSimulator::processUserSelection(int selection, int accountNumber) {
     }
 }
 //=============================================================================
-// Function: run
+// Method: run
 // Description: Starts the ATM system.
 //=============================================================================
 char ATMSimulator::run() {
@@ -85,6 +83,7 @@ char ATMSimulator::run() {
         }
     }
 
+    // Prompt the user for a menu selection until they choose to exit
     int selection;
     do {
         displayMenu();

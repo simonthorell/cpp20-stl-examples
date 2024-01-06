@@ -12,7 +12,7 @@ AccountManager::AccountManager() {
     accounts[345678] = std::make_shared<Account>(345678, 3000.0);
 }
 //=============================================================================
-// Function: createAccount
+// Method: createAccount
 // Description: Creates a new account with the specified account number and
 //              initial balance.
 //=============================================================================
@@ -21,7 +21,7 @@ void AccountManager::createAccount(int accountNumber, double initialBalance) {
     std::cout << "Account created successfully with balance: $" << initialBalance << "\n";
 }
 //=============================================================================
-// Function: deleteAccount
+// Method: deleteAccount
 // Description: Deletes the account with the specified account number.
 //=============================================================================
 bool AccountManager::deleteAccount(int accountNumber) {
@@ -33,7 +33,7 @@ bool AccountManager::deleteAccount(int accountNumber) {
     return false;
 }
 //=============================================================================
-// Function: deposit
+// Method: deposit
 // Description: Deposits the specified amount into the account with the
 //              specified account number.
 //=============================================================================
@@ -47,7 +47,7 @@ void AccountManager::deposit(int accountNumber, double amount) {
     }
 }
 //=============================================================================
-// Function: withdraw
+// Method: withdraw
 // Description: Withdraws the specified amount from the account with the
 //              specified account number.
 //=============================================================================
@@ -66,7 +66,7 @@ bool AccountManager::withdraw(int accountNumber, double amount) {
     return false;
 }
 //=============================================================================
-// Function: getAccount
+// Method: getAccount
 // Description: Returns a shared pointer to the account with the specified
 //              account number.
 //=============================================================================

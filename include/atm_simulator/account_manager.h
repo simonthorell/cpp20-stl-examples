@@ -17,7 +17,7 @@ public:
     virtual std::shared_ptr<Account> getAccount(int accountNumber);
 
 private:
-    // Map of Bank Accounts 
+    // Map of Bank Accounts - unordered map for fast lookup
     std::unordered_map<int, std::shared_ptr<Account>> accounts;
 };
 
