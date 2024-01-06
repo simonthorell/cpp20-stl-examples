@@ -8,5 +8,6 @@
 //             teamName - name of team player is on
 // Description: Constructor for HockeyPlayer.
 //==============================================================================
-HockeyPlayer::HockeyPlayer(int id, const std::string& name, int jersey, const std::string& teamName)
+HockeyPlayer::HockeyPlayer(int id, const std::string& name, 
+                           int jersey, const std::string& teamName)
     : id(id), name(name), jersey(jersey), teamName(teamName) {}

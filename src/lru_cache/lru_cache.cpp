@@ -11,6 +11,7 @@ LRUCache<T>::LRUCache(int capacity) : capacity(capacity) {}
 
 template <typename T> // Destructor
 LRUCache<T>::~LRUCache() {
+    // Delete all players in the cache
     for (auto &pair : cacheMap) {
         delete pair.second.first;
     }
@@ -23,8 +24,10 @@ LRUCache<T>::~LRUCache() {
 //=============================================================================
 template <typename T>
 T* LRUCache<T>::getPlayer(int id) {
+    // If the player is not in the cache, return nullptr
     if (cacheMap.find(id) == cacheMap.end())
         return nullptr;
+    // Otherwise, move the player to the front of the list and return it
     refer(id, cacheMap[id].first);
     return cacheMap[id].first;
 }
@@ -36,18 +39,28 @@ T* LRUCache<T>::getPlayer(int id) {
 //              least recently used player is removed from the cache.
 //=============================================================================
 template <typename T>
+// Add the given player to the cache
 void LRUCache<T>::refer(int id, T* player) {
+    // If the player is not in the cache
     if (cacheMap.find(id) == cacheMap.end()) {
+        // If the cache is full, remove the least recently used player
         if (lruList.size() == capacity) {
+            // Get the id of the least recently used player
             int last = lruList.back();
+            // Remove the player from the cache
             lruList.pop_back();
+            // Delete the player from the heap
             delete cacheMap[last].first;
+            // Remove the player from the cache map
             cacheMap.erase(last);
         }
+    // If the player is in the cache, remove it from the list
     } else {
         lruList.erase(cacheMap[id].second);
     }
+    // Add the player to the front of the list and cache map
     lruList.push_front(id);
+    // Add the player to the cache map
     cacheMap[id] = {player, lruList.begin()};
 }
 //=============================================================================

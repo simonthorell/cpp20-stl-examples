@@ -16,6 +16,7 @@ std::time_t now = std::time(nullptr);
 std::time_t today = std::mktime(std::localtime(&now));
 std::time_t yesterday = today - (24 * 60 * 60); // 24 hours ago
 
+// TODO: Implement/replace with gmock?
 std::vector<SensorData> createMockSensorData(int numAltitudeReadings, 
                                              std::time_t targetTimeStart, 
                                              std::time_t targetTimeEnd
