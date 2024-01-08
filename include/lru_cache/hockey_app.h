@@ -17,7 +17,7 @@ private:
     std::string filename; // Name of file to load players from
 public: // Make public for testing purposes
     // Class Data Methods
-    void generateRandomPlayers(int amountOfPlayers); // Generate random players and save to file
+    void generateRandomPlayersFile(int amountOfPlayers); // Generate random players and save to file
     void populateCacheWithPlayersFromFile(int chacheSize); // Populate cache with players
     HockeyPlayer* loadPlayerFromFile(int id); // Load player from file
     HockeyPlayer parsePlayerLine(const std::string& line); // Parse player from line

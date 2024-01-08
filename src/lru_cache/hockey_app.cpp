@@ -19,7 +19,7 @@ HockeyApp::HockeyApp(int cacheSize, int amountOfPlayers, const std::string& file
     // Generate random players file - if the file does not exist
     if (!std::filesystem::exists(filename)) {
         // Generate 'amountOfPlayers' random players and save them to file
-        generateRandomPlayers(amountOfPlayers);
+        generateRandomPlayersFile(amountOfPlayers);
     }
     // Populate the LRU cache with 'cacheSize' amount of players
     populateCacheWithPlayersFromFile(cacheSize);
@@ -49,7 +49,7 @@ void HockeyApp::run() {
 // Method: generateRandomPlayers
 // Description: Generates 100,000 random hockey players and saves them to file.
 //=============================================================================
-void HockeyApp::generateRandomPlayers(int amountOfPlayers) {
+void HockeyApp::generateRandomPlayersFile(int amountOfPlayers) {
     std::ofstream file(filename); // Open file for writing (filename from variable)
     std::random_device rd;      // Obtain a random number from hardware
     std::mt19937 gen(rd());     // Random number generator
