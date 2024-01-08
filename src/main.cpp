@@ -69,7 +69,8 @@ int runMenuLoop() {
         }
         case '6': {
             // File will be generated in folder build/src/hockey_players.txt
-            HockeyApp app(10, "hockey_players.txt");
+            // CacheSize, AmountOfPlayers, Filename
+            HockeyApp app(10, 100000, "hockey_players.txt");
             app.run();
             break;
         }
