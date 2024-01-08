@@ -39,7 +39,6 @@ void HockeyApp::run() {
         switch (choice) {
             case 1: showPlayersInCache(); break;
             case 2: searchPlayerByID(); break;
-            case 3: searchPlayerByName(); break;
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
         }
@@ -115,7 +114,6 @@ void HockeyApp::printMenu() {
     std::cout << "\n===== Hockey Player App Menu =====\n";
     std::cout << "1. Show Players in Cache\n";
     std::cout << "2. Search Player by ID\n";
-    std::cout << "3. Search Player by Name\n";
     std::cout << "0. Exit\n";
     std::cout << "==================================\n";
     std::cout << "Select an option: ";
@@ -131,7 +129,7 @@ void HockeyApp::showPlayersInCache() {
 
     int count = 0; // Keep track of how many players are in the cache
     for (const int id : cache->getLRUList()) {
-        HockeyPlayer* player = cache->getPlayer(id);
+        HockeyPlayer* player = cache->getPlayerWithoutUpdatingLRU(id);
         if (player) {
             std::cout << "Cache Entry " << ++count << ":\tID: " << player->id 
                       << ", Name: " << player->name << ", Jersey: " 
@@ -144,47 +142,29 @@ void HockeyApp::showPlayersInCache() {
 void HockeyApp::searchPlayerByID() {
     int id;
     std::cout << "Enter Player ID: ";
-    std::cin >> id;
+    if (!(std::cin >> id) || id < 0) {
+        std::cin.clear(); // clear the error flag
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // skip bad input
+        std::cout << "Invalid ID entered. Please enter a positive number.\n";
+        return;
+    }
 
     HockeyPlayer* player = cache->getPlayer(id);
     if (player) {
         std::cout << "Player found in cache: " << player->name << std::endl;
+        cache->refer(id, player);  // Update LRU position
     } else {
-        player = loadPlayerFromFile(id);
-        if (player) {
-            std::cout << "Player found in file: " << player->name << std::endl;
-            cache->refer(id, player);
-            std::cout << "Player added to cache." << std::endl;
-        } else {
-            std::cout << "Player not found." << std::endl;
-        }
-    }
-}
-
-void HockeyApp::searchPlayerByName() {
-    std::string name;
-    std::cout << "Enter Player Name: ";
-    std::cin.ignore();
-    std::getline(std::cin, name);
-
-    std::ifstream file(filename);
-    std::string line;
-    bool found = false;
-
-    while (std::getline(file, line)) {
-        HockeyPlayer player = parsePlayerLine(line);
-        if (player.name == name) {
-            std::cout << "Player found: ID: " << player.id << ", Name: " << player.name 
-                      << ", Jersey: " << player.jersey << ", Team: " << player.teamName << std::endl;
-            if (!cache->getPlayer(player.id)) {
-                cache->refer(player.id, new HockeyPlayer(player));
+        try {
+            player = loadPlayerFromFile(id);
+            if (player) {
+                std::cout << "Player found in file: " << player->name << std::endl;
+                cache->refer(id, player);
+                std::cout << "Player added to cache." << std::endl;
+            } else {
+                std::cout << "Player with ID: " << id << " not found." << std::endl;
             }
-            found = true;
-            break; // Remove break if you want to find all players with the given name.
+        } catch (const std::exception& e) {
+            std::cerr << "Failed to load player from file: " << e.what() << std::endl;
         }
-    }
-
-    if (!found) {
-        std::cout << "Player with name '" << name << "' not found." << std::endl;
     }
 }
