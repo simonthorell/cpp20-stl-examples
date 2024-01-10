@@ -16,16 +16,16 @@ SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data)
 //=============================================================================
 int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t day) {
     std::tm timeStruct = {0, 0, 0, day, month - 1, year - 1900};
-    std::time_t targetTimeStart = std::mktime(&timeStruct);
-    std::time_t targetTimeEnd = targetTimeStart + 86400; // 86400 seconds in a day
+    std::time_t targetDay = std::mktime(&timeStruct);
+    timeStruct.tm_mday += 1; // Increment day by 1 to get the next day
+    std::time_t nextDay = std::mktime(&timeStruct);
     // Filter to only Altitude data entries in the given time range
-    auto isAltitudeInTimeRange = [targetTimeStart, targetTimeEnd]
-                                 (SensorData& data) {
+    auto isAltitudeInTimeRange = [targetDay, nextDay] (SensorData& data) {
         std::time_t dataTime = data.getTime();
         return data.getSensorType() == SensorType::Altitude && 
-               dataTime >= targetTimeStart && dataTime < targetTimeEnd;
+               dataTime >= targetDay && dataTime < nextDay;
     };
-    // Count & return the number of altitude data entries in the given time range
+    // Count & return the number of altitude data entries on the given day
     return std::ranges::count_if(sensorData, isAltitudeInTimeRange);
 }
 //=============================================================================
