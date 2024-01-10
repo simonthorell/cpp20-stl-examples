@@ -11,7 +11,7 @@ SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data)
 //=============================================================================
 // Function: countAltitudeData
 // Description: Counts and prints the number of altitude data entries from a 
-//              specific date (2012-01-02).
+//              specific date given by year, month, and day parameters.
 //=============================================================================
 int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t day) {
     // Start of the target day (2012-01-02 00:00:00)
@@ -34,9 +34,9 @@ int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t
 }
 //=============================================================================
 // Function: checkMaxSpeed
-// Description: Checks whether any SpeedInKmh data entries exceed 99.9. Iteration
-//              stops once the first qualifying entry is found, returning true.
-//              If no entries exceed this speed, it returns false.
+// Description: Checks whether any SpeedInKmh data entries exceed maxSpeed 
+//              Iteration stops once the first qualifying entry is found,
+//              returning true. Returns false if no entries exceed this speed.
 //=============================================================================
 bool SensorDataProcessor::checkMaxSpeed(float maxSpeed) {
     // Filter to only SpeedInKmh entries exceeding 99.9, using lazy evaluation for efficiency
@@ -48,26 +48,22 @@ bool SensorDataProcessor::checkMaxSpeed(float maxSpeed) {
 }
 //=============================================================================
 // Function: updateFuelConsumption
-// Description: Updates all FuelConsumption data entries by 75%.
+// Description: Updates all FuelConsumption data entries by the given factor.
 //=============================================================================
 bool SensorDataProcessor::updateFuelConsumption(float factor) {
-    // Create a view of only the FuelConsumption entries
-    auto fuelConsumptionView = std::views::filter(sensorData, [](SensorData& data) {
+    // Create a combined view for filtering and transforming
+    auto updateView = sensorData | std::views::filter([](SensorData& data) {
         return data.getSensorType() == SensorType::FuelConsumption;
-    });
-
-    // Return false if there are no entries to update or if the factor is 0
-    if (std::ranges::empty(fuelConsumptionView) || factor == 0) { 
-        return false;
-    } 
-
-    // Apply the transformation to update the value in place
-    std::ranges::transform(fuelConsumptionView, fuelConsumptionView.begin()
-                                              , [factor](SensorData& data) {
+    }) | std::views::transform([factor](SensorData& data) {
         data.setValue(data.getValue() * factor);
         return data; // The return value isn't used since we're modifying in place
     });
 
-    // Return true if any entries were updated
-    return !std::ranges::empty(fuelConsumptionView);
+    // Check that the factor is not 0 and there are entries to update/transform 
+    if (factor != 0 && updateView.begin() != updateView.end()) {
+        for (auto&& data : updateView) {} // Iterate the view to apply the transformation
+        return true; // Transformation was applied
+    }
+
+    return false; // Transformation was not applied
 }
