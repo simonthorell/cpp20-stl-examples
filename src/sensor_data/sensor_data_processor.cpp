@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <ranges>
+#include <ctime>
 //=============================================================================
 // Constructor: SensorDataProcessor
 // Description: Initializes the SensorDataProcessor with a vector of SensorData.
@@ -14,23 +15,18 @@ SensorDataProcessor::SensorDataProcessor(const std::vector<SensorData>& data)
 //              specific date given by year, month, and day parameters.
 //=============================================================================
 int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t day) {
-    // Start of the target day (2012-01-02 00:00:00)
-    std::time_t targetTimeStart = createTime(year, month, day, 0, 0, 0);
-    // Start of the next day (2012-01-03 00:00:00)
-    struct tm nextDay = *localtime(&targetTimeStart);
-    nextDay.tm_mday += 1;  // Move to the next day
-    std::time_t targetTimeEnd = mktime(&nextDay);
-
-    int altitudeDataCount = std::ranges::count_if
-                                (sensorData, [targetTimeStart, targetTimeEnd]
-                                (SensorData& data) {
+    std::tm timeStruct = {0, 0, 0, day, month - 1, year - 1900};
+    std::time_t targetTimeStart = std::mktime(&timeStruct);
+    std::time_t targetTimeEnd = targetTimeStart + 86400; // 86400 seconds in a day
+    // Filter to only Altitude data entries in the given time range
+    auto isAltitudeInTimeRange = [targetTimeStart, targetTimeEnd]
+                                 (SensorData& data) {
         std::time_t dataTime = data.getTime();
-        return data.getSensorType() == SensorType::Altitude 
-            && dataTime >= targetTimeStart && dataTime < targetTimeEnd;
-    });
-    
-    // Return the amount of altitude data entries
-    return altitudeDataCount;
+        return data.getSensorType() == SensorType::Altitude && 
+               dataTime >= targetTimeStart && dataTime < targetTimeEnd;
+    };
+    // Count & return the number of altitude data entries in the given time range
+    return std::ranges::count_if(sensorData, isAltitudeInTimeRange);
 }
 //=============================================================================
 // Function: checkMaxSpeed
@@ -39,7 +35,7 @@ int SensorDataProcessor::countAltitudeData(uint16_t year, uint8_t month, uint8_t
 //              returning true. Returns false if no entries exceed this speed.
 //=============================================================================
 bool SensorDataProcessor::checkMaxSpeed(float maxSpeed) {
-    // Filter to only SpeedInKmh entries exceeding 99.9, using lazy evaluation for efficiency
+    // Filter to only SpeedInKmh > maxSpeed using lazy evaluation for efficiency
     auto speedReached = std::views::filter(sensorData, [maxSpeed](SensorData& data) {
         return data.getSensorType() == SensorType::SpeedInKmh && data.getValue() > maxSpeed;
     });
