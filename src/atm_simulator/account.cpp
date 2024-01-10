@@ -8,30 +8,24 @@
 Account::Account(int accountNumber, double balance)
     : accountNumber(accountNumber), balance(balance) {}
 //=============================================================================
-// Method: getAccountNumber
-// Description: Returns the account number.
+// Getters: getAccountNumber & getBalance
+// Description: Returns the account number and balance.
 //=============================================================================
 int Account::getAccountNumber() const {
     return accountNumber;
 }
-//=============================================================================
-// Method: getBalance
-// Description: Returns the account balance.
-//=============================================================================
+
 double Account::getBalance() const {
     return balance;
 }
 //=============================================================================
-// Method: deposit
-// Description: Deposits the specified amount into the account.
+// Methods: deposit & withdraw
+// Description: Deposits or withdraws the specified amount from the account.
 //=============================================================================
 void Account::deposit(double amount) {
     balance += amount;
 }
-//=============================================================================
-// Method: withdraw
-// Description: Withdraws the specified amount from the account.
-//=============================================================================
+
 bool Account::withdraw(double amount) {
     if (amount > balance) return false;
     balance -= amount;
