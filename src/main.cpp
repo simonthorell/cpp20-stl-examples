@@ -10,7 +10,7 @@
  ******************************************************************************/
 #include <iostream>
 
-#include "sensor_data/sensor_data.h"          // Sensor Data Processing
+#include "sensor_data/sensor_data_manager.h"  // Sensor Data Processing
 #include "queue_simulator/queue_simulator.h"  // Queue Simulator
 #include "atm_simulator/atm_simulator.h"      // ATM Simulator
 #include "lru_cache/hockey_app.h"             // LRU Cache
@@ -21,20 +21,15 @@ void displayMenu();
 //=============================================================================
 int main() {
     int choice;
-    
+
     do {
         displayMenu();
         std::cin >> choice;
         switch (choice) {
-            case 1: sensorData(1); break;
-            case 2: sensorData(2); break;
-            case 3: sensorData(3); break;
+            case 1: case 2: case 3:
+                SensorDataManager(choice, 2012, 1, 2, 99.9f, 1.75f).run(); break;
             case 4: QueueSimulator().run(); break;
-            case 5: {
-                auto manager = std::make_shared<AccountManager>();
-                ATMSimulator(manager).run(); 
-                break;
-            }
+            case 5: ATMSimulator(std::make_shared<AccountManager>()).run(); break;
             case 6: HockeyApp(10,100000,"hockey_players.txt").run(); break;
         }
     } while (choice != 0); // Exit when user enters 0
