@@ -8,83 +8,43 @@
  *              course 'Datastructures and Algorithms' for IoT23 at Nackademin,
  *              Stockholm, Sweden. 
  ******************************************************************************/
-
 // Include standard libraries
 #include <iostream> // std::cout, std::cin
-
 // Include header files
 #include "sensor_data/sensor_data.h"
 #include "queue_simulator/queue_simulator.h"
 #include "atm_simulator/atm_simulator.h"
 #include "lru_cache/hockey_app.h"
-
 // Declare utility functions
 void displayMenu();
-int runMenuLoop();
-
 //=============================================================================
-//                                Main Function
+//                             Main Execution
 //=============================================================================
-
 int main() {
-    if (!runMenuLoop())
-        return EXIT_SUCCESS; // runMenuLoop() exited successfully (0)
-    else
-        return EXIT_FAILURE; // runMenuLoop() exited with failure (1)
-}
-
-//=============================================================================
-//                              Utility Functions
-//=============================================================================
-
-int runMenuLoop() {
-    char exec = 0; // 0 = success, 1 = failure
-    char choice;
-    bool exit = false;
-
-    while (!exit) {
-        if (exec > 0) // check if previous execution failed
-            std::cout << "Execution failed!\n";
-
+    int choice;
+    
+    do {
         displayMenu();
         std::cin >> choice;
+        switch (choice) {
+            case 1: sensorData(1); break;
+            case 2: sensorData(2); break;
+            case 3: sensorData(3); break;
+            case 4: QueueSimulator().run(); break;
+            case 5: {
+                auto manager = std::make_shared<AccountManager>();
+                ATMSimulator(manager).run(); 
+                break;
+            }
+            case 6: HockeyApp(10,100000,"hockey_players.txt").run(); break;
+        }
+    } while (choice != 0); // Exit when user enters 0
 
-        switch (choice)
-        {
-        case '1': case '2': case '3':
-            // TODO: Create App Class and move sensor_data() to it
-            exec = sensorData(choice);
-            break;
-        case '4': {
-            // TODO: Take target values as arguments
-            QueueSimulator simulator;
-            exec = simulator.run();
-            break;
-        }
-        case '5': {
-            auto manager = std::make_shared<AccountManager>(); // Shared AccountManager
-            ATMSimulator atm(manager);
-            exec = atm.run();
-            break;
-        }
-        case '6': {
-            // File will be generated in folder build/src/hockey_players.txt
-            // CacheSize, AmountOfPlayers, Filename
-            HockeyApp app(10, 100000, "hockey_players.txt");
-            app.run();
-            break;
-        }
-        case '0':
-            exit = true;
-            break;
-        default:
-            std::cout << "Invalid selection. Please try again.\n";
-        }
-    }
-    // Return 0 if exited successfully using 'exit', otherwise return 1
-    return exit ? 0 : 1;
+    return EXIT_SUCCESS;
 }
-
+//=============================================================================
+//                             Utility Functions
+//=============================================================================
 void displayMenu() {
     std::cout << "================== Menu ==================\n";
     std::cout << "1. Part 1 - Sensor Data (Altitude)\n";

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <cstdint>
 //=============================================================================
 // Constructor: SensorData
 // Description: Initializes a new instance of SensorData with the given type, 
@@ -71,7 +72,7 @@ std::time_t createTime(int year, int month, int day, int hour, int minute,
 //              data such as counting altitude readings, checking maximum 
 //              speed, and updating fuel consumption.
 //=============================================================================
-int sensorData(char menuSelection) {
+int sensorData(int menuSelection) {
 	constexpr uint16_t YEAR = 2012;
 	constexpr uint8_t MONTH = 1;
 	constexpr uint8_t DAY = 2;
@@ -86,18 +87,18 @@ int sensorData(char menuSelection) {
 
 	// Perform the requested operation
 	switch (menuSelection) {
-	case '1':
+	case 1:
 		std::cout << "Altitude readings: " 
 		          << processor.countAltitudeData(YEAR, MONTH, DAY) 
 			      << std::endl;
 		break;
-	case '2':
+	case 2:
 		if (processor.checkMaxSpeed(MAX_SPEED))
 			std::cout << "Max speed reached" << std::endl;
 		else
 			std::cout << "Max speed not reached" << std::endl;
 		break;
-	case '3':
+	case 3:
 		if (processor.updateFuelConsumption(FUEL_CONSUMPTION_FACTOR))
 			std::cout << "Fuel consumption updated" << std::endl;
 		else

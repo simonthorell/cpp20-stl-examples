@@ -31,6 +31,6 @@ time_t createTime(int year, int month, int day, int hour, int minute,
                   int second);
 				  
 // Main function for sensor data
-int sensorData(char menuSelection);
+int sensorData(int menuSelection);
 
 #endif // SENSOR_DATA_H
