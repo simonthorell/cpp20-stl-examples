@@ -50,16 +50,13 @@ bool SensorDataProcessor::updateFuelConsumption(float factor) {
     // Create a combined view for filtering and transforming
     auto updateView = sensorData | std::views::filter([](SensorData& data) {
         return data.getSensorType() == SensorType::FuelConsumption;
-    }) | std::views::transform([factor](SensorData& data) {
+    }) | std::views::transform([factor](SensorData& data) -> SensorData& {
         data.setValue(data.getValue() * factor);
         return data; // The return value isn't used since we're modifying in place
     });
-
-    // Check that the factor is not 0 and there are entries to update/transform 
-    if (factor != 0 && updateView.begin() != updateView.end()) {
-        for (auto&& data : updateView) {} // Iterate the view to apply the transformation
-        return true; // Transformation was applied
+    // Check if factor is non-zero and updateView is not empty (transformation applied).
+    if (factor != 0 && !std::ranges::empty(updateView)) {
+        return true; // Transformation was applied during iteration over updateView
     }
-
     return false; // Transformation was not applied
 }
