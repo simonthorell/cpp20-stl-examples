@@ -3,19 +3,18 @@
  * Project Name: cpp-Iot23-algorithms
  * Author: Simon Thorell
  * Date Created: 2023-12-26
- * Last Modified: 2023-01-03
- * Description: This file contains the main execution loop for the exam in the
- *              course 'Datastructures and Algorithms' for IoT23 at Nackademin,
- *              Stockholm, Sweden. 
+ * Last Modified: 2023-01-10
+ * Description: This project contains various algorithms and data structures
+ *              implemented in C++. The purpose of this project is to practice
+ *              and demonstrate understanding of algorithms & data structures.
  ******************************************************************************/
-// Include standard libraries
-#include <iostream> // std::cout, std::cin
-// Include header files
-#include "sensor_data/sensor_data.h"
-#include "queue_simulator/queue_simulator.h"
-#include "atm_simulator/atm_simulator.h"
-#include "lru_cache/hockey_app.h"
-// Declare utility functions
+#include <iostream>
+
+#include "sensor_data/sensor_data.h"          // Sensor Data Processing
+#include "queue_simulator/queue_simulator.h"  // Queue Simulator
+#include "atm_simulator/atm_simulator.h"      // ATM Simulator
+#include "lru_cache/hockey_app.h"             // LRU Cache
+
 void displayMenu();
 //=============================================================================
 //                             Main Execution
