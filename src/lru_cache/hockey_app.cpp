@@ -16,14 +16,11 @@
 //              Destructor for HockeyApp. Deletes/clears the cache.
 //=============================================================================
 HockeyApp::HockeyApp(int cacheSize, int amountOfPlayers, const std::string& filename)
-    // Initialize cache and filename
     : cache(new LRUCache<HockeyPlayer>(cacheSize)), filename(filename) {
     // Generate random players file - if the file does not exist
     if (!std::filesystem::exists(filename)) {
-        // Generate 'amountOfPlayers' random players and save them to file
         generateRandomPlayersFile(amountOfPlayers);
     }
-    // Populate the LRU cache with 'cacheSize' amount of players
     populateCacheWithPlayersFromFile(cacheSize);
 }
 
@@ -85,9 +82,9 @@ void HockeyApp::populateCacheWithPlayersFromFile(int cacheSize) {
     }
 
     // Populate the cache with the players
-    for (const HockeyPlayer& player : recentPlayers) {
-        cache->refer(player.id, new HockeyPlayer(player));
-    }
+    std::ranges::for_each(recentPlayers, [this](const HockeyPlayer& player) {
+        this->cache->refer(player.id, new HockeyPlayer(player));
+    });
 
     std::cout << "Populated cache with " << recentPlayers.size() 
               << " (up to 10) recent players from the file." << std::endl;
@@ -156,15 +153,15 @@ void HockeyApp::showPlayersInCache() {
     }
 
     int count = 0; // Keep track of how many players are in the cache
-    for (const int id : cache->getLRUList()) {
+    std::ranges::for_each(cache->getLRUList(), [&count, this](const int id) {
         HockeyPlayer* player = cache->getPlayerWithoutUpdatingLRU(id);
-        if (player) {
-            std::cout << "Cache Entry " << ++count << ":\tID: " << player->id 
-                      << ", Name: " << player->name << ", Jersey: " 
-                      << player->jersey << ", Team: " << player->teamName 
-                      << "\n";
-        }
-    }
+            if (player) {
+                std::cout << "Cache Entry " << ++count << ":\tID: " << player->id 
+                        << ", Name: " << player->name << ", Jersey: " 
+                        << player->jersey << ", Team: " << player->teamName 
+                        << "\n";
+            }
+        });
 }
 
 void HockeyApp::searchPlayerByID() {
