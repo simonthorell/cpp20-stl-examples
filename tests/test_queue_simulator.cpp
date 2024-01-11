@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include "queue_simulator/queue_simulator.h"
-/* NOTE TO SELF 2023-01-11: Best practise not to test i/o methods. Rather 
+/* NOTE TO SELF 2024-01-11: Best practise not to test i/o methods. Rather 
  * re-factor class to more testable methods. */
 //==============================================================================
 // QueueSimulatorTest Class
