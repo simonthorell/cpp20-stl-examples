@@ -3,7 +3,7 @@
  * Project Name: cpp-Iot23-algorithms
  * Author: Simon Thorell
  * Date Created: 2023-12-26
- * Last Modified: 2023-01-10
+ * Last Modified: 2024-01-10
  * Description: This project contains various algorithms and data structures
  *              implemented in C++. The purpose of this project is to practice
  *              and demonstrate understanding of algorithms & data structures.
