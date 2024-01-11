@@ -1,12 +1,12 @@
 //==============================================================================
 // QUEUE SIMULATOR TEST SUITE
 //==============================================================================
-#include <gtest/gtest.h>
-#include <sstream>
-#include "queue_simulator/queue_simulator.h"
 /* NOTE TO SELF 2024-01-11: Best practise not to test i/o methods. Rather 
  * re-factor class to more testable methods. Also checkout FFF framwork for 
  * embedded testing: https://github.com/meekrosoft/fff */
+#include <gtest/gtest.h>
+#include <sstream>
+#include "queue_simulator/queue_simulator.h"
 //==============================================================================
 // QueueSimulatorTest Class
 // Description: This class defines the test fixture for the QueueSimulator
@@ -60,6 +60,7 @@ TEST_F(QueueSimulatorTest, AddCustomerTest) {
 
 TEST_F(QueueSimulatorTest, CallNextCustomerNotEmptyQueueTest) {
     simulateInput("John\n");
+    captureOutput();
     simulator.addCustomer();
     captureOutput();
     simulator.callNextCustomer();
