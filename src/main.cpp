@@ -14,6 +14,7 @@
 #include "queue_simulator/queue_simulator.h"  // Queue Simulator
 #include "atm_simulator/atm_simulator.h"      // ATM Simulator
 #include "lru_cache/hockey_app.h"             // LRU Cache
+#include "lru_cache/nhl_api.h"            // LRU Cache
 
 void displayMenu();
 //=============================================================================
@@ -31,6 +32,23 @@ int main() {
             case 4: QueueSimulator().run(); break;
             case 5: ATMSimulator(std::make_shared<AccountManager>()).run(); break;
             case 6: HockeyApp(10,100000,"hockey_players.txt").run(); break;
+            case 7: {
+                HockeyData hd;
+                std::vector<HockeyPlayer> players = hd.getAllPlayers();
+
+                // Check if there are at least 10 players
+                size_t numPlayersToDisplay = players.size() >= 10 ? 10 : players.size();
+
+                for (size_t i = 0; i < numPlayersToDisplay; ++i) {
+                    const auto& player = players[i];
+                    std::cout << "Player ID: " << player.id
+                            << ", Name: " << player.name
+                            << ", Jersey Number: " << player.jersey
+                            << ", Team: " << player.teamName << std::endl;
+                }
+                break;
+            
+            }
         }
     } while (choice != 0); // Exit when user enters 0
 
