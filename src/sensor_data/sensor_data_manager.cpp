@@ -20,6 +20,7 @@ int SensorDataManager::run() {
     // Create instance of SensorDataProcessor
     SensorDataProcessor processor(sensorData);
 
+    // Process data based on menu selection & print result
     switch (menuSelection) {
     case 1:
         std::cout << "Altitude readings: " 
