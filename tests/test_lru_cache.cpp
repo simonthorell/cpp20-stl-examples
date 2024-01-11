@@ -1,6 +1,14 @@
+//==============================================================================
+// LRU CHACHE TEST SUITE
+//==============================================================================
 #include "lru_cache/lru_cache.h"
 #include "gtest/gtest.h"
-
+//==============================================================================
+// LRUCacheTest Class
+// Description: This class defines the test fixture for the LRUCache class. It
+//              sets up the testing environment and includes all the test cases
+//              for the LRUCache class.
+//==============================================================================
 class LRUCacheTest : public ::testing::Test {
 protected:
     LRUCache<HockeyPlayer>* cache;
@@ -13,7 +21,9 @@ protected:
         delete cache;
     }
 };
-
+//==============================================================================
+// Test Cases
+//==============================================================================
 TEST_F(LRUCacheTest, IsEmptyInitially) {
     EXPECT_TRUE(cache->isEmpty());
 }
