@@ -5,7 +5,8 @@
 #include <sstream>
 #include "queue_simulator/queue_simulator.h"
 /* NOTE TO SELF 2024-01-11: Best practise not to test i/o methods. Rather 
- * re-factor class to more testable methods. */
+ * re-factor class to more testable methods. Also checkout FFF framwork for 
+ * embedded testing: https://github.com/meekrosoft/fff */
 //==============================================================================
 // QueueSimulatorTest Class
 // Description: This class defines the test fixture for the QueueSimulator
