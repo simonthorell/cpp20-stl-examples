@@ -1,4 +1,6 @@
 #include "lru_cache/hockey_app.h"
+#include <algorithm>
+#include <ranges>
 #include <fstream>
 #include <random>
 #include <iostream>
@@ -55,12 +57,12 @@ void HockeyApp::generateRandomPlayersFile(int amountOfPlayers) {
     std::mt19937 gen(rd());     // Random number generator
     std::uniform_int_distribution<> dis(1, 99); // Jersey & Team no. range
 
-    for (int i = 0; i < amountOfPlayers; ++i) {
-        // Assign a unique ID (i) to each player
-        file << i << ",Player" << i << "," << dis(gen) << ",Team" 
-            << dis(gen) << std::endl;
-    }
-    std::cout << "Generated " << amountOfPlayers << " random hockey players in file: "
+    std::ranges::for_each(std::views::iota(0, amountOfPlayers), [&](int i) {
+        file << i << ",Player" << i << "," << dis(gen) 
+             << ",Team" << dis(gen) << std::endl;
+    });
+
+    std::cout << "Generated " << amountOfPlayers << " hockey players in file: "
               << filename << std::endl;
 }
 //=============================================================================
