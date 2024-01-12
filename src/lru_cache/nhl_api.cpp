@@ -1,6 +1,7 @@
 #include "lru_cache/nhl_api.h"
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+#include <iostream> // for debugging
 
 using json = nlohmann::json; // for convenience
 
@@ -10,7 +11,8 @@ using json = nlohmann::json; // for convenience
 //              curl_easy_perform() and is used to write the data from the API
 //              into a string.
 //=============================================================================
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, 
+                            std::string* s) {
     size_t newLength = size * nmemb;
     try {
         s->append((char*)contents, newLength);
@@ -22,7 +24,7 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::stri
     }
 }
 //=============================================================================
-// Methods: getJsonFromApi, parsePlayers
+// Methods: getJsonFromApi, parseSpotlightPlayers, parsePlayers
 // Description: Retrieves JSON data from the specified API. The JSON data is
 //              then parsed and converted into a vector of HockeyPlayer objects.
 //=============================================================================
@@ -33,13 +35,14 @@ std::string HockeyData::getJsonFromApi(const std::string& url) {
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0"); // Some APIs require a user-agent
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
         CURLcode res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
         if (res != CURLE_OK) {
             // Handle the error, such as a network problem
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", 
+                    curl_easy_strerror(res));
         }
     }
     return readBuffer;
@@ -59,19 +62,58 @@ std::vector<HockeyPlayer> HockeyData::parseSpotlightPlayers(const std::string& j
     return players;
 }
 
+// Needs to dynamically typecheck the JSON data (Suppose due to old data?)
 std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
+    std::cout << "Parsing players..." << std::endl;
     auto json = nlohmann::json::parse(jsonStr);
     std::vector<HockeyPlayer> players;
+
     for (const auto& playerData : json) {
-        int id = playerData.value("playerId", 0);
-        std::string name = playerData["name"].value("default", "");
-        int jerseyNumber = playerData.value("sweaterNumber", 0);
-        std::string teamName = playerData.value("teamTriCode", "");
-        
+        int id = 0;
+        if (!playerData["playerId"].is_null()) {
+            id = playerData["playerId"].is_string() ? std::stoi(playerData["playerId"].get<std::string>()) 
+                                                    : playerData["playerId"].get<int>();
+        }
+
+        std::string name = playerData["name"].is_null() ? "" : playerData["name"].get<std::string>();
+
+        int jerseyNumber = 0;
+        if (!playerData["sweaterNumber"].is_null()) {
+            jerseyNumber = playerData["sweaterNumber"].is_string() ? std::stoi(playerData["sweaterNumber"].get<std::string>()) 
+                                                                   : playerData["sweaterNumber"].get<int>();
+        }
+
+        std::string teamName = playerData["lastTeamAbbrev"].is_null() ? "" : playerData["lastTeamAbbrev"].get<std::string>();
+
         players.emplace_back(id, name, jerseyNumber, teamName);
     }
+
     return players;
 }
+// std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
+//     std::cout << "Parsing players..." << std::endl;
+//     auto json = nlohmann::json::parse(jsonStr);
+//     std::vector<HockeyPlayer> players;
+
+//     for (const auto& playerData : json) {
+//         // Handle playerId as a number
+//         int id = playerData.value("playerId", 0);
+//         std::cout << "id: " << id << std::endl;
+
+//         std::string name = playerData.value("name", "");
+//         std::cout << "name: " << name << std::endl;
+
+//         // Handle sweaterNumber as a number
+//         int jerseyNumber = playerData.value("sweaterNumber", 0);
+//         std::cout << "jerseyNumber: " << jerseyNumber << std::endl;
+
+//         std::string teamName = playerData.value("lastTeamAbbrev", "");
+//         std::cout << "teamName: " << teamName << std::endl;
+
+//         players.emplace_back(id, name, jerseyNumber, teamName);
+//     }
+//     return players;
+// }
 //=============================================================================
 // Method: getNhlSpotlightPlayers, getAllPlayers
 // Description: Retrieves NHL player data from the NHL API.
@@ -84,7 +126,44 @@ std::vector<HockeyPlayer> HockeyData::getNhlSpotlightPlayers() {
     
 }
 
-std::vector<HockeyPlayer> HockeyData::getAllPlayers() {
-    std::string teamsJsonStr = getJsonFromApi("https://statsapi.web.nhl.com/api/v1/teams?expand=team.roster");
-    return parsePlayers(teamsJsonStr);
+std::vector<HockeyPlayer> HockeyData::getPlayerByName(const std::string& playerName) {
+    // Split the playerName into first and last names
+    size_t spaceIndex = playerName.find(' ');
+    std::string firstName = (spaceIndex != std::string::npos) 
+                         ? playerName.substr(0, spaceIndex) : playerName;
+    std::string lastName = (spaceIndex != std::string::npos) 
+                         ? playerName.substr(spaceIndex + 1) : "";
+
+    // culture = language
+    // limit = number of results
+    // q = query (player name)
+    // active = whether the player is currently active or not
+
+    // Construct the API URL
+    std::string api = "https://search.d3.nhle.com/api/v1/search/player?culture=EN&limit=1&q=" 
+                      + firstName + "%20" + lastName; // + "&active=false";
+    
+    // api = "https://search.d3.nhle.com/api/v1/search/player?culture=EN&limit=1&q=Mats%20Sundin&active=false";
+    // std::cout << api << std::endl; // for debugging
+
+    // Fetch the JSON string from the API
+    std::string playersJsonStr = getJsonFromApi(api);
+
+    // Parse the players from the JSON string
+    return parsePlayers(playersJsonStr);
 }
+
+// TO USEAGE:
+// HockeyData hd;
+//     try {
+//         std::vector<HockeyPlayer> players = hd.getPlayerByName("Mats Sundin");
+
+//         for (const auto& player : players) {
+//             std::cout << "ID: " << player.id
+//                     << ", Name: " << player.name
+//                     << ", Jersey: " << player.jersey
+//                     << ", Team: " << player.teamName << std::endl;
+//         }
+//     } catch (const std::exception& e) {
+//         std::cerr << "Error: " << e.what() << std::endl;
+//     }

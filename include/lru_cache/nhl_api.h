@@ -8,7 +8,7 @@
 class HockeyData {
 public:
     std::vector<HockeyPlayer> getNhlSpotlightPlayers();
-    std::vector<HockeyPlayer> getAllPlayers();
+    std::vector<HockeyPlayer> getPlayerByName(const std::string& playerName);
 
 private:
     std::string getJsonFromApi(const std::string& url);

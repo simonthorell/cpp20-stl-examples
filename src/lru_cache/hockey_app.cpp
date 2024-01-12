@@ -78,8 +78,8 @@ void HockeyApp::populateCacheWithCurrentNHLSpotlightPlayers(int cacheSize) {
         cache->refer(player.id, new HockeyPlayer(player));
     }
 
-    std::cout << "Populated cache with " << numPlayersToAdd 
-              << " recent NHL spotlight players." << std::endl;
+    std::cout << "Populated cache with the " << numPlayersToAdd 
+              << " current NHL spotlight players." << std::endl;
 }
 //=============================================================================
 // Methods: loadPlayersFromFile, parsePlayerLine
@@ -110,6 +110,24 @@ HockeyPlayer HockeyApp::parsePlayerLine(const std::string& line) {
 
     return HockeyPlayer(id, name, jersey, teamName);
 }
+//=============================================================================
+// Method: searchPlayerByNameInNhlApi
+// Description: Searches for a player by name in the NHL API and puts the 
+//              player first in cache.
+//=============================================================================
+// HockeyPlayer* HockeyApp::searchPlayerByNameInNhlApi(const std::string& name) {
+//     HockeyData hd;
+//     std::vector<HockeyPlayer> players = hd.getAllPlayers();
+//     auto it = std::ranges::find_if(players, [&name](const HockeyPlayer& player) {
+//         return player.name == name;
+//     });
+//     if (it != players.end()) {
+//         HockeyPlayer* player = new HockeyPlayer(*it);
+//         cache->refer(player->id, player);
+//         return player;
+//     }
+//     return nullptr;
+// }
 //=============================================================================
 // Methods: printMenu, showPlayersInCache, searchPlayerByID, searchPlayerByName
 // Description: User interface methods for the HockeyApp.
