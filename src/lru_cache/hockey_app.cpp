@@ -39,7 +39,7 @@ void HockeyApp::run() {
         std::cin >> choice;
         switch (choice) {
             case 1: showPlayersInCache(); break;
-            case 2: searchPlayerByID(); break;
+            case 2: searchPlayerByID(); break; // From file with random players
             case 3: searchPlayerByName(); break; // Using NHL API
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
@@ -131,8 +131,8 @@ HockeyPlayer* HockeyApp::findPlayerInCacheByName(const std::string& name) {
 void HockeyApp::printMenu() {
     std::cout << "\n===== Hockey Player App Menu =====\n";
     std::cout << "1. Show Players in Cache\n";
-    std::cout << "2. Search Player by ID\n";
-    std::cout << "3. Search Player by Name (Using NHL API)\n";
+    std::cout << "2. Search Player by ID (File)\n";
+    std::cout << "3. Search Player by Name (NHL API)\n";
     std::cout << "0. Exit\n";
     std::cout << "==================================\n";
     std::cout << "Select an option: ";

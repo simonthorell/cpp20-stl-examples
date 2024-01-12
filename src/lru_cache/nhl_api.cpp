@@ -64,7 +64,6 @@ std::vector<HockeyPlayer> HockeyData::parseSpotlightPlayers(const std::string& j
 
 // Needs to dynamically typecheck the JSON data (Suppose due to old data?)
 std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
-    std::cout << "Parsing players..." << std::endl;
     auto json = nlohmann::json::parse(jsonStr);
     std::vector<HockeyPlayer> players;
 
@@ -91,7 +90,7 @@ std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
     return players;
 }
 //=============================================================================
-// Method: getNhlSpotlightPlayers, getAllPlayers
+// Method: getNhlSpotlightPlayers, getPlayerByName
 // Description: Retrieves NHL player data from the NHL API.
 //=============================================================================
 std::vector<HockeyPlayer> HockeyData::getNhlSpotlightPlayers() {
@@ -129,7 +128,7 @@ std::vector<HockeyPlayer> HockeyData::getPlayerByName(const std::string& playerN
     return parsePlayers(playersJsonStr);
 }
 
-// TO USEAGE:
+// Use example:
 // HockeyData hd;
 //     try {
 //         std::vector<HockeyPlayer> players = hd.getPlayerByName("Mats Sundin");
