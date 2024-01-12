@@ -113,8 +113,8 @@ std::vector<HockeyPlayer> HockeyData::getNhlSpotlightPlayers() {
     
 }
 // Fetch JSON of players matching the specified name
-std::vector<HockeyPlayer> HockeyData::getPlayerByName(
-    const std::string& playerName, int searchLimit) {
+std::vector<HockeyPlayer> HockeyData::getPlayerByName(const std::string& playerName, 
+                                                      int searchLimit) {
     // Split the playerName into first and last names
     size_t spaceIndex = playerName.find(' ');
     std::string firstName = (spaceIndex != std::string::npos) 

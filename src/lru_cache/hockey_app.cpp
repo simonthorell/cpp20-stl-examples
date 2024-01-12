@@ -221,17 +221,17 @@ void HockeyApp::searchPlayerByName(int searchLimit) {
                     break;
                 }
             }
-            
+
             // Give the user the option to select a player if no exact match
             if (!exactMatchFound) {
                 // If no exact match, ask the user to select a player
-                std::cout << "Multiple players found!" << std::endl;
+                std::cout << "\nMultiple players found!\n" << std::endl;
                 for (size_t i = 0; i < players.size(); ++i) {
-                    std::cout << i + 1 << ": " << players[i].name << ", " 
-                              << players[i].jersey << ", " << players[i].teamName
-                              << std::endl;
+                    std::cout << i + 1 << ": " << players[i].name 
+                              << ", Jersey: " << players[i].jersey << ", Team: "
+                              << players[i].teamName << std::endl;
                 }
-                std::cout << "Select a player: ";
+                std::cout << "\nSelect a player (1-" << searchLimit << "): ";
                 int choice;
                 std::cin >> choice;
                 if (choice > 0 && choice <= static_cast<int>(players.size())) {
