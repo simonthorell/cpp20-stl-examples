@@ -27,7 +27,7 @@ public: // Make public for testing purposes
     void printMenu();
     void showPlayersInCache();
     void searchPlayerByID();
-    void searchPlayerByName();
+    void searchPlayerByName(int searchLimit);
 };
 
 #endif // HOCKEYAPP_H

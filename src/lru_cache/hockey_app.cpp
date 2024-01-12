@@ -40,7 +40,7 @@ void HockeyApp::run() {
         switch (choice) {
             case 1: showPlayersInCache(); break;
             case 2: searchPlayerByID(); break; // From file with random players
-            case 3: searchPlayerByName(); break; // Using NHL API
+            case 3: searchPlayerByName(10); break; // Using NHL API returning 10 results
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
         }
@@ -167,28 +167,30 @@ void HockeyApp::searchPlayerByID() {
         std::cout << "Invalid ID entered. Please enter a positive number.\n";
         return;
     }
-
+    // First, search for the player in the cache
     HockeyPlayer* player = cache->getPlayer(id);
     if (player) {
         std::cout << "Player found in cache: " << player->name << std::endl;
         cache->refer(id, player);  // Update LRU position
-    } else {
-        try {
-            player = loadPlayerFromFile(id);
-            if (player) {
-                std::cout << "Player found in file: " << player->name << std::endl;
-                cache->refer(id, player);
-                std::cout << "Player added to cache." << std::endl;
-            } else {
-                std::cout << "Player with ID: " << id << " not found." << std::endl;
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Failed to load player from file: " << e.what() << std::endl;
+        return;
+    }
+
+    // If not found in the cache, search the file
+    try {
+        player = loadPlayerFromFile(id);
+        if (player) {
+            std::cout << "Player found in file: " << player->name << std::endl;
+            cache->refer(id, player);
+            std::cout << "Player added to cache." << std::endl;
+        } else {
+            std::cout << "Player with ID: " << id << " not found." << std::endl;
         }
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to load player from file: " << e.what() << std::endl;
     }
 }
 
-void HockeyApp::searchPlayerByName() {
+void HockeyApp::searchPlayerByName(int searchLimit) {
     std::string name;
     std::cout << "Enter Player Name: ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
@@ -205,13 +207,42 @@ void HockeyApp::searchPlayerByName() {
     // If not found in the cache, search using the NHL API
     try {
         HockeyData hd;
-        std::vector<HockeyPlayer> players = hd.getPlayerByName(name);
+        std::vector<HockeyPlayer> players = hd.getPlayerByName(name, searchLimit);
         if (!players.empty()) {
-            // Note: if you change the limit in getPlayerByName in API class, you can get multiple players
-            // to disply in the menu and select from. For now, we will just use the first player in the list.
-            player = new HockeyPlayer(players[0]); // Assuming the first player in the list is the correct one
-            cache->refer(player->id, player);
-            std::cout << "Player found in NHL API and added to cache: " << player->name << std::endl;
+            // Check for an exact match
+            bool exactMatchFound = false;
+            for (size_t i = 0; i < players.size(); ++i) {
+                if (players[i].name == name) {
+                    player = new HockeyPlayer(players[i]);
+                    cache->refer(player->id, player);
+                    std::cout << "Exact match found and added to cache: " 
+                              << player->name << std::endl;
+                    exactMatchFound = true;
+                    break;
+                }
+            }
+            
+            // Give the user the option to select a player if no exact match
+            if (!exactMatchFound) {
+                // If no exact match, ask the user to select a player
+                std::cout << "Multiple players found!" << std::endl;
+                for (size_t i = 0; i < players.size(); ++i) {
+                    std::cout << i + 1 << ": " << players[i].name << ", " 
+                              << players[i].jersey << ", " << players[i].teamName
+                              << std::endl;
+                }
+                std::cout << "Select a player: ";
+                int choice;
+                std::cin >> choice;
+                if (choice > 0 && choice <= static_cast<int>(players.size())) {
+                    player = new HockeyPlayer(players[choice - 1]);
+                    cache->refer(player->id, player);
+                    std::cout << "Player selected and added to cache: " 
+                              << player->name << std::endl;
+                } else {
+                    std::cout << "Invalid selection." << std::endl;
+                }
+            }
         } else {
             std::cout << "Player with name: " << name << " not found." << std::endl;
         }

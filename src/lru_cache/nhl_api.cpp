@@ -114,7 +114,7 @@ std::vector<HockeyPlayer> HockeyData::getNhlSpotlightPlayers() {
 }
 // Fetch JSON of players matching the specified name
 std::vector<HockeyPlayer> HockeyData::getPlayerByName(
-    const std::string& playerName) {
+    const std::string& playerName, int searchLimit) {
     // Split the playerName into first and last names
     size_t spaceIndex = playerName.find(' ');
     std::string firstName = (spaceIndex != std::string::npos) 
@@ -123,8 +123,9 @@ std::vector<HockeyPlayer> HockeyData::getPlayerByName(
                          ? playerName.substr(spaceIndex + 1) : "";
 
     // Construct the API URL
-    std::string api = "https://search.d3.nhle.com/api/v1/search/player?culture=EN&limit=1&q=" 
-                      + firstName + "%20" + lastName; // + "&active=false";
+    std::string api = "https://search.d3.nhle.com/api/v1/search/player?culture=EN&limit=" 
+                      + std::to_string(searchLimit) + "&q=" + firstName + "%20" + lastName; 
+                      // + "&active=false";
 
     // Fetch the JSON string from the API
     std::string playersJsonStr = getJsonFromApi(api);
