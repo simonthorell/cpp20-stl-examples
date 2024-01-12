@@ -40,6 +40,7 @@ void HockeyApp::run() {
         switch (choice) {
             case 1: showPlayersInCache(); break;
             case 2: searchPlayerByID(); break;
+            case 3: searchPlayerByName(); break; // Using NHL API
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
         }
@@ -111,23 +112,18 @@ HockeyPlayer HockeyApp::parsePlayerLine(const std::string& line) {
     return HockeyPlayer(id, name, jersey, teamName);
 }
 //=============================================================================
-// Method: searchPlayerByNameInNhlApi
-// Description: Searches for a player by name in the NHL API and puts the 
-//              player first in cache.
+// Method: findPlayerInCacheByName
+// Description: Finds a player in the cache by name and returns the player.
 //=============================================================================
-// HockeyPlayer* HockeyApp::searchPlayerByNameInNhlApi(const std::string& name) {
-//     HockeyData hd;
-//     std::vector<HockeyPlayer> players = hd.getAllPlayers();
-//     auto it = std::ranges::find_if(players, [&name](const HockeyPlayer& player) {
-//         return player.name == name;
-//     });
-//     if (it != players.end()) {
-//         HockeyPlayer* player = new HockeyPlayer(*it);
-//         cache->refer(player->id, player);
-//         return player;
-//     }
-//     return nullptr;
-// }
+HockeyPlayer* HockeyApp::findPlayerInCacheByName(const std::string& name) {
+    for (const int id : cache->getLRUList()) {
+        HockeyPlayer* player = cache->getPlayerWithoutUpdatingLRU(id);
+        if (player && player->name == name) {
+            return player;
+        }
+    }
+    return nullptr; // Player not found in cache
+}
 //=============================================================================
 // Methods: printMenu, showPlayersInCache, searchPlayerByID, searchPlayerByName
 // Description: User interface methods for the HockeyApp.
@@ -136,6 +132,7 @@ void HockeyApp::printMenu() {
     std::cout << "\n===== Hockey Player App Menu =====\n";
     std::cout << "1. Show Players in Cache\n";
     std::cout << "2. Search Player by ID\n";
+    std::cout << "3. Search Player by Name (Using NHL API)\n";
     std::cout << "0. Exit\n";
     std::cout << "==================================\n";
     std::cout << "Select an option: ";
@@ -188,5 +185,35 @@ void HockeyApp::searchPlayerByID() {
         } catch (const std::exception& e) {
             std::cerr << "Failed to load player from file: " << e.what() << std::endl;
         }
+    }
+}
+
+void HockeyApp::searchPlayerByName() {
+    std::string name;
+    std::cout << "Enter Player Name: ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
+    std::getline(std::cin, name); // Use getline to read the full name
+
+    // First, search for the player in the cache
+    HockeyPlayer* player = findPlayerInCacheByName(name);
+    if (player) {
+        std::cout << "Player found in cache: " << player->name << std::endl;
+        cache->refer(player->id, player);  // Update LRU position
+        return;
+    }
+
+    // If not found in the cache, search using the NHL API
+    try {
+        HockeyData hd;
+        std::vector<HockeyPlayer> players = hd.getPlayerByName(name);
+        if (!players.empty()) {
+            player = new HockeyPlayer(players[0]); // Assuming the first player in the list is the correct one
+            cache->refer(player->id, player);
+            std::cout << "Player found in NHL API and added to cache: " << player->name << std::endl;
+        } else {
+            std::cout << "Player with name: " << name << " not found." << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to load player from NHL API: " << e.what() << std::endl;
     }
 }
