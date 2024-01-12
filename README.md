@@ -1,4 +1,4 @@
-# C++20 STL & Algorithms with Unit Tests, API's and External Libraries
+# C++20 STL Algorithms with Unit Tests, API's and External Libraries
 
 This repository explores the features and capabilities of the modern C++20 Standard Template Library (STL) and various algorithms, including practical applications of the NHL API and integration of external libraries such as libcurl and nlohmann/json. It demonstrates problem-solving techniques and data handling using CMake for fetching and managing external libraries. The initial project structure was created with [this template](https://github.com/simonthorell/cpp-cmake-googletest.git). For more inspiration, check out the GitHub of the incredible programmer [Stefan Holmberg](https://github.com/aspcodenet).
 
