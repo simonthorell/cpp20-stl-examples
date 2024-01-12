@@ -1,4 +1,5 @@
 #include "lru_cache/nhl_api.h"
+#include <iostream>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 
@@ -20,6 +21,19 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb,
         // Handle memory problem
         return 0;
     }
+}
+//=============================================================================
+// Method: getCurrentDate
+// Description: Helper function for getUpcomingGames.
+//=============================================================================
+std::string getCurrentDate() {
+    auto now = std::chrono::system_clock::now();
+    auto time = std::chrono::system_clock::to_time_t(now);
+    std::tm tm = *std::localtime(&time);
+
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d");
+    return oss.str();
 }
 //=============================================================================
 // Methods: getJsonFromApi, parseSpotlightPlayers, parsePlayers
@@ -132,4 +146,42 @@ std::vector<HockeyPlayer> HockeyData::getPlayerByName(const std::string& playerN
 
     // Parse the players from the JSON string
     return parsePlayers(playersJsonStr);
+}
+//=============================================================================
+// Methods: getTodaysGames
+// Description: Retrieves NHL game data from the NHL API.
+//=============================================================================
+std::vector<GameInfo> HockeyData::getUpcomingGames() {
+    std::string currentDate = getCurrentDate();
+    std::string api = "https://api-web.nhle.com/v1/schedule/" + currentDate;
+    std::string jsonStr = getJsonFromApi(api);
+
+    if (jsonStr.empty()) {
+        std::cerr << "Error: No data received from API." << std::endl;
+        return std::vector<GameInfo>();
+    }
+
+    try {
+        auto json = nlohmann::json::parse(jsonStr);
+        std::vector<GameInfo> gamesInfo;
+
+        for (const auto& week : json["gameWeek"]) {
+            for (const auto& gameData : week["games"]) {
+                GameInfo game;
+                game.startTimeUTC = gameData["startTimeUTC"].get<std::string>();
+                game.homeTeam = gameData["homeTeam"]["placeName"]["default"].get<std::string>() +
+                                " (" + gameData["homeTeam"]["abbrev"].get<std::string>() + ")";
+                game.awayTeam = gameData["awayTeam"]["placeName"]["default"].get<std::string>() +
+                                " (" + gameData["awayTeam"]["abbrev"].get<std::string>() + ")";
+
+                gamesInfo.push_back(game);
+            }
+        }
+
+        return gamesInfo;
+
+    } catch (const nlohmann::json::parse_error& e) {
+        std::cerr << "JSON parsing error: " << e.what() << std::endl;
+        return std::vector<GameInfo>();
+    }
 }

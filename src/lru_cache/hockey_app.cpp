@@ -41,6 +41,7 @@ void HockeyApp::run() {
             case 1: showPlayersInCache(); break;
             case 2: searchPlayerByID(); break; // From file with random players
             case 3: searchPlayerByName(10); break; // Using NHL API returning 10 results
+            case 4: showUpcomingGames(); break;
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
         }
@@ -133,6 +134,7 @@ void HockeyApp::printMenu() {
     std::cout << "1. Show Players in Cache\n";
     std::cout << "2. Search Player by ID (File)\n";
     std::cout << "3. Search Player by Name (NHL API)\n";
+    std::cout << "4. Show Upcoming NHL Games\n";
     std::cout << "0. Exit\n";
     std::cout << "==================================\n";
     std::cout << "Select an option: ";
@@ -244,5 +246,19 @@ void HockeyApp::searchPlayerByName(int searchLimit) {
         }
     } catch (const std::exception& e) {
         std::cerr << "Failed to load player from NHL API: " << e.what() << std::endl;
+    }
+}
+
+//=============================================================================
+// Method: getTodaysGame
+// Description: Retrieves the next NHL game from the NHL API.
+//=============================================================================
+void HockeyApp::showUpcomingGames() {
+    HockeyData hd;
+    std::vector<GameInfo> upcomingGames = hd.getUpcomingGames();
+
+    std::cout << "\n-- Upcoming NHL Games --" << std::endl;
+    for (const GameInfo& game : upcomingGames) {
+        std::cout << game.toString() << std::endl;
     }
 }

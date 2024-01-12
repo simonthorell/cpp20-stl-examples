@@ -28,6 +28,8 @@ public: // Make public for testing purposes
     void showPlayersInCache();
     void searchPlayerByID();
     void searchPlayerByName(int searchLimit);
+    // Additional cool features:
+    void showUpcomingGames();
 };
 
 #endif // HOCKEYAPP_H
