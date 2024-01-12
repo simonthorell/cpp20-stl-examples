@@ -207,6 +207,8 @@ void HockeyApp::searchPlayerByName() {
         HockeyData hd;
         std::vector<HockeyPlayer> players = hd.getPlayerByName(name);
         if (!players.empty()) {
+            // Note: if you change the limit in getPlayerByName in API class, you can get multiple players
+            // to disply in the menu and select from. For now, we will just use the first player in the list.
             player = new HockeyPlayer(players[0]); // Assuming the first player in the list is the correct one
             cache->refer(player->id, player);
             std::cout << "Player found in NHL API and added to cache: " << player->name << std::endl;
