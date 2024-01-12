@@ -29,4 +29,5 @@ add_compile_options(
    -Wall      # Enable all warnings
    -Wextra    # Enable extra warnings
    -pedantic  # Ensure standards-compliant code
+   -O2        # Optimize
 )
