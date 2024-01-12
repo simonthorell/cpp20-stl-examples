@@ -210,28 +210,24 @@ void HockeyApp::searchPlayerByName(int searchLimit) {
         std::vector<HockeyPlayer> players = hd.getPlayerByName(name, searchLimit);
         if (!players.empty()) {
             // Check for an exact match
-            bool exactMatchFound = false;
-            for (size_t i = 0; i < players.size(); ++i) {
-                if (players[i].name == name) {
-                    player = new HockeyPlayer(players[i]);
-                    cache->refer(player->id, player);
-                    std::cout << "Exact match found and added to cache: " 
-                              << player->name << std::endl;
-                    exactMatchFound = true;
-                    break;
-                }
-            }
-
-            // Give the user the option to select a player if no exact match
-            if (!exactMatchFound) {
-                // If no exact match, ask the user to select a player
+            auto matchIter = std::ranges::find_if(players, [&name](const HockeyPlayer& p) {
+                return p.name == name;
+            });
+            // If an exact match is found, add it to the cache
+            if (matchIter != players.end()) {
+                player = new HockeyPlayer(*matchIter);
+                cache->refer(player->id, player);
+                std::cout << "Exact match found and added to cache: " 
+                          << player->name << std::endl;
+            } else { 
+            // Ask the user to select a player if no exact match
                 std::cout << "\nMultiple players found!\n" << std::endl;
-                for (size_t i = 0; i < players.size(); ++i) {
-                    std::cout << i + 1 << ": " << players[i].name 
-                              << ", Jersey: " << players[i].jersey << ", Team: "
-                              << players[i].teamName << std::endl;
-                }
-                std::cout << "\nSelect a player (1-" << searchLimit << "): ";
+                std::ranges::for_each(players, [index = 1](const HockeyPlayer& p) mutable {
+                    std::cout << index++ << ": " << p.name << ", " 
+                              << p.jersey << ", " << p.teamName << std::endl;
+                });
+
+                std::cout << "\nSelect a player: ";
                 int choice;
                 std::cin >> choice;
                 if (choice > 0 && choice <= static_cast<int>(players.size())) {
