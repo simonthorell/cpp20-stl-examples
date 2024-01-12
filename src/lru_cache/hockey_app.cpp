@@ -250,7 +250,7 @@ void HockeyApp::searchPlayerByName(int searchLimit) {
 }
 
 //=============================================================================
-// Method: getTodaysGame
+// Method: showUpcomingGames
 // Description: Retrieves the next NHL game from the NHL API.
 //=============================================================================
 void HockeyApp::showUpcomingGames() {
