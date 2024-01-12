@@ -45,6 +45,20 @@ std::string HockeyData::getJsonFromApi(const std::string& url) {
     return readBuffer;
 }
 
+std::vector<HockeyPlayer> HockeyData::parseSpotlightPlayers(const std::string& jsonStr) {
+    auto json = nlohmann::json::parse(jsonStr);
+    std::vector<HockeyPlayer> players;
+    for (const auto& playerData : json) {
+        int id = playerData.value("playerId", 0);
+        std::string name = playerData["name"].value("default", "");
+        int jerseyNumber = playerData.value("sweaterNumber", 0);
+        std::string teamName = playerData.value("teamTriCode", "");
+        
+        players.emplace_back(id, name, jerseyNumber, teamName);
+    }
+    return players;
+}
+
 std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
     auto json = nlohmann::json::parse(jsonStr);
     std::vector<HockeyPlayer> players;
@@ -63,9 +77,10 @@ std::vector<HockeyPlayer> HockeyData::parsePlayers(const std::string& jsonStr) {
 // Description: Retrieves NHL player data from the NHL API.
 //=============================================================================
 std::vector<HockeyPlayer> HockeyData::getNhlSpotlightPlayers() {
+    // https://www.nhl.com/player
     std::string api = "https://api-web.nhle.com/v1/player-spotlight";
     std::string spotlightJsonStr = getJsonFromApi(api);
-    return parsePlayers(spotlightJsonStr);
+    return parseSpotlightPlayers(spotlightJsonStr);
     
 }
 

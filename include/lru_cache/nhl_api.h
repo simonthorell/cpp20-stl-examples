@@ -12,6 +12,7 @@ public:
 
 private:
     std::string getJsonFromApi(const std::string& url);
+    std::vector<HockeyPlayer> parseSpotlightPlayers(const std::string& jsonStr);
     std::vector<HockeyPlayer> parsePlayers(const std::string& jsonStr);
 };
 

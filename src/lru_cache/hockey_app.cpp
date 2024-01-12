@@ -1,4 +1,5 @@
 #include "lru_cache/hockey_app.h"
+#include "lru_cache/nhl_api.h"
 #include <algorithm>
 #include <ranges>
 #include <fstream>
@@ -21,7 +22,7 @@ HockeyApp::HockeyApp(int cacheSize, int amountOfPlayers, const std::string& file
     if (!std::filesystem::exists(filename)) {
         generateRandomPlayersFile(amountOfPlayers);
     }
-    populateCacheWithPlayersFromFile(cacheSize);
+    populateCacheWithCurrentNHLSpotlightPlayers(cacheSize);
 }
 
 HockeyApp::~HockeyApp() {
@@ -66,42 +67,20 @@ void HockeyApp::generateRandomPlayersFile(int amountOfPlayers) {
 // Method: populateCacheWithPlayersFromFile
 // Description: Populates the cache with "cacheSize" random players.
 //=============================================================================
-void HockeyApp::populateCacheWithPlayersFromFile(int cacheSize) {
-    std::ifstream file(filename);
-    std::string line;
-    std::deque<HockeyPlayer> recentPlayers;
+void HockeyApp::populateCacheWithCurrentNHLSpotlightPlayers(int cacheSize) {
+    HockeyData hd;
+    std::vector<HockeyPlayer> players = hd.getNhlSpotlightPlayers();
 
-    // Get the last (newest) 10 players in the file
-    while (std::getline(file, line)) {
-        HockeyPlayer player = parsePlayerLine(line);
-        recentPlayers.push_back(player);
-        // If we have more than cacheSize players, remove the oldest one
-        if (recentPlayers.size() > cacheSize) {
-            recentPlayers.pop_front();
-        }
+    size_t numPlayersToAdd = players.size() >= cacheSize ? cacheSize : players.size();
+
+    for (size_t i = 0; i < numPlayersToAdd; ++i) {
+        const auto& player = players[i];
+        cache->refer(player.id, new HockeyPlayer(player));
     }
 
-    // Populate the cache with the players
-    std::ranges::for_each(recentPlayers, [this](const HockeyPlayer& player) {
-        this->cache->refer(player.id, new HockeyPlayer(player));
-    });
-
-    std::cout << "Populated cache with " << recentPlayers.size() 
-              << " (up to 10) recent players from the file." << std::endl;
+    std::cout << "Populated cache with " << numPlayersToAdd 
+              << " recent NHL spotlight players." << std::endl;
 }
-// Alternative implementation (First 10 players in file):
-// void HockeyApp::populateCacheWithPlayersFromFile(int cacheSize) {
-//     std::ifstream file(filename);
-//     std::string line;
-//     int count = 0;
-//     while (std::getline(file, line) && count < cacheSize) {
-//         HockeyPlayer player = parsePlayerLine(line);
-//         cache->refer(player.id, new HockeyPlayer(player));
-//         ++count;
-//     }
-//     std::cout << "Populated cache with 10 random players from the file." 
-//               << std::endl;
-// }
 //=============================================================================
 // Methods: loadPlayersFromFile, parsePlayerLine
 // Description: Loads players from file into allPlayers map then parse them.
