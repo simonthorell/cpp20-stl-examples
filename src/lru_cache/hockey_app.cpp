@@ -223,8 +223,8 @@ void HockeyApp::searchPlayerByName(int searchLimit) {
             // Ask the user to select a player if no exact match
                 std::cout << "\nMultiple players found!\n" << std::endl;
                 std::ranges::for_each(players, [index = 1](const HockeyPlayer& p) mutable {
-                    std::cout << index++ << ": " << p.name << ", " 
-                              << p.jersey << ", " << p.teamName << std::endl;
+                    std::cout << index++ << ": " << p.name << ", Jersey: " 
+                              << p.jersey << ", Team: " << p.teamName << std::endl;
                 });
 
                 std::cout << "\nSelect a player: ";
