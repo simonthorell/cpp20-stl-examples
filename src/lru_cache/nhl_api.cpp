@@ -148,7 +148,7 @@ std::vector<HockeyPlayer> HockeyData::getPlayerByName(const std::string& playerN
     return parsePlayers(playersJsonStr);
 }
 //=============================================================================
-// Methods: getTodaysGames
+// Methods: getUpcomingGames
 // Description: Retrieves NHL game data from the NHL API.
 //=============================================================================
 std::vector<GameInfo> HockeyData::getUpcomingGames() {
