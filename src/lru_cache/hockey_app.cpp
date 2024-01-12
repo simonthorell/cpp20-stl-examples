@@ -1,4 +1,5 @@
 #include "lru_cache/hockey_app.h"
+#include "lru_cache/nhl_api.h"
 #include <algorithm>
 #include <ranges>
 #include <fstream>
@@ -21,7 +22,7 @@ HockeyApp::HockeyApp(int cacheSize, int amountOfPlayers, const std::string& file
     if (!std::filesystem::exists(filename)) {
         generateRandomPlayersFile(amountOfPlayers);
     }
-    populateCacheWithPlayersFromFile(cacheSize);
+    populateCacheWithCurrentNHLSpotlightPlayers(cacheSize);
 }
 
 HockeyApp::~HockeyApp() {
@@ -39,6 +40,7 @@ void HockeyApp::run() {
         switch (choice) {
             case 1: showPlayersInCache(); break;
             case 2: searchPlayerByID(); break;
+            case 3: searchPlayerByName(); break; // Using NHL API
             case 0: break;
             default: std::cout << "Invalid option. Please try again.\n";
         }
@@ -66,42 +68,20 @@ void HockeyApp::generateRandomPlayersFile(int amountOfPlayers) {
 // Method: populateCacheWithPlayersFromFile
 // Description: Populates the cache with "cacheSize" random players.
 //=============================================================================
-void HockeyApp::populateCacheWithPlayersFromFile(int cacheSize) {
-    std::ifstream file(filename);
-    std::string line;
-    std::deque<HockeyPlayer> recentPlayers;
+void HockeyApp::populateCacheWithCurrentNHLSpotlightPlayers(int cacheSize) {
+    HockeyData hd;
+    std::vector<HockeyPlayer> players = hd.getNhlSpotlightPlayers();
 
-    // Get the last (newest) 10 players in the file
-    while (std::getline(file, line)) {
-        HockeyPlayer player = parsePlayerLine(line);
-        recentPlayers.push_back(player);
-        // If we have more than cacheSize players, remove the oldest one
-        if (recentPlayers.size() > cacheSize) {
-            recentPlayers.pop_front();
-        }
+    size_t numPlayersToAdd = players.size() >= cacheSize ? cacheSize : players.size();
+
+    for (size_t i = 0; i < numPlayersToAdd; ++i) {
+        const auto& player = players[i];
+        cache->refer(player.id, new HockeyPlayer(player));
     }
 
-    // Populate the cache with the players
-    std::ranges::for_each(recentPlayers, [this](const HockeyPlayer& player) {
-        this->cache->refer(player.id, new HockeyPlayer(player));
-    });
-
-    std::cout << "Populated cache with " << recentPlayers.size() 
-              << " (up to 10) recent players from the file." << std::endl;
+    std::cout << "Populated cache with the " << numPlayersToAdd 
+              << " current NHL spotlight players." << std::endl;
 }
-// Alternative implementation (First 10 players in file):
-// void HockeyApp::populateCacheWithPlayersFromFile(int cacheSize) {
-//     std::ifstream file(filename);
-//     std::string line;
-//     int count = 0;
-//     while (std::getline(file, line) && count < cacheSize) {
-//         HockeyPlayer player = parsePlayerLine(line);
-//         cache->refer(player.id, new HockeyPlayer(player));
-//         ++count;
-//     }
-//     std::cout << "Populated cache with 10 random players from the file." 
-//               << std::endl;
-// }
 //=============================================================================
 // Methods: loadPlayersFromFile, parsePlayerLine
 // Description: Loads players from file into allPlayers map then parse them.
@@ -132,6 +112,19 @@ HockeyPlayer HockeyApp::parsePlayerLine(const std::string& line) {
     return HockeyPlayer(id, name, jersey, teamName);
 }
 //=============================================================================
+// Method: findPlayerInCacheByName
+// Description: Finds a player in the cache by name and returns the player.
+//=============================================================================
+HockeyPlayer* HockeyApp::findPlayerInCacheByName(const std::string& name) {
+    for (const int id : cache->getLRUList()) {
+        HockeyPlayer* player = cache->getPlayerWithoutUpdatingLRU(id);
+        if (player && player->name == name) {
+            return player;
+        }
+    }
+    return nullptr; // Player not found in cache
+}
+//=============================================================================
 // Methods: printMenu, showPlayersInCache, searchPlayerByID, searchPlayerByName
 // Description: User interface methods for the HockeyApp.
 //=============================================================================
@@ -139,6 +132,7 @@ void HockeyApp::printMenu() {
     std::cout << "\n===== Hockey Player App Menu =====\n";
     std::cout << "1. Show Players in Cache\n";
     std::cout << "2. Search Player by ID\n";
+    std::cout << "3. Search Player by Name (Using NHL API)\n";
     std::cout << "0. Exit\n";
     std::cout << "==================================\n";
     std::cout << "Select an option: ";
@@ -191,5 +185,35 @@ void HockeyApp::searchPlayerByID() {
         } catch (const std::exception& e) {
             std::cerr << "Failed to load player from file: " << e.what() << std::endl;
         }
+    }
+}
+
+void HockeyApp::searchPlayerByName() {
+    std::string name;
+    std::cout << "Enter Player Name: ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
+    std::getline(std::cin, name); // Use getline to read the full name
+
+    // First, search for the player in the cache
+    HockeyPlayer* player = findPlayerInCacheByName(name);
+    if (player) {
+        std::cout << "Player found in cache: " << player->name << std::endl;
+        cache->refer(player->id, player);  // Update LRU position
+        return;
+    }
+
+    // If not found in the cache, search using the NHL API
+    try {
+        HockeyData hd;
+        std::vector<HockeyPlayer> players = hd.getPlayerByName(name);
+        if (!players.empty()) {
+            player = new HockeyPlayer(players[0]); // Assuming the first player in the list is the correct one
+            cache->refer(player->id, player);
+            std::cout << "Player found in NHL API and added to cache: " << player->name << std::endl;
+        } else {
+            std::cout << "Player with name: " << name << " not found." << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to load player from NHL API: " << e.what() << std::endl;
     }
 }

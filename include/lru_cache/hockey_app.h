@@ -14,17 +14,20 @@ public:
     void run();
 private:
     LRUCache<HockeyPlayer>* cache; // Cache of HockeyPlayers
-    std::string filename; // Name of file to load players from
+    std::string filename; // Name of players file
 public: // Make public for testing purposes
     // Class Data Methods
-    void generateRandomPlayersFile(int amountOfPlayers); // Generate random players and save to file
-    void populateCacheWithPlayersFromFile(int chacheSize); // Populate cache with players
-    HockeyPlayer* loadPlayerFromFile(int id); // Load player from file
-    HockeyPlayer parsePlayerLine(const std::string& line); // Parse player from line
+    void generateRandomPlayersFile(int amountOfPlayers);
+    void populateCacheWithCurrentNHLSpotlightPlayers(int cacheSize);
+    // void populateCacheWithPlayersFromFile(int chacheSize);
+    HockeyPlayer* loadPlayerFromFile(int id);
+    HockeyPlayer parsePlayerLine(const std::string& line);
+    HockeyPlayer* findPlayerInCacheByName(const std::string& name);
     // Class UI methods
-    void printMenu();            // Print menu
-    void showPlayersInCache();   // Show players in cache
-    void searchPlayerByID();     // Search player by ID
+    void printMenu();
+    void showPlayersInCache();
+    void searchPlayerByID();
+    void searchPlayerByName();
 };
 
 #endif // HOCKEYAPP_H
