@@ -34,7 +34,7 @@ int main() {
             case 6: HockeyApp(10,100000,"hockey_players.txt").run(); break;
             case 7: {
                 HockeyData hd;
-                std::vector<HockeyPlayer> players = hd.getAllPlayers();
+                std::vector<HockeyPlayer> players = hd.getNhlSpotlightPlayers();
 
                 // Check if there are at least 10 players
                 size_t numPlayersToDisplay = players.size() >= 10 ? 10 : players.size();

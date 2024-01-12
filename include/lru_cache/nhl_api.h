@@ -7,6 +7,7 @@
 
 class HockeyData {
 public:
+    std::vector<HockeyPlayer> getNhlSpotlightPlayers();
     std::vector<HockeyPlayer> getAllPlayers();
 
 private:
